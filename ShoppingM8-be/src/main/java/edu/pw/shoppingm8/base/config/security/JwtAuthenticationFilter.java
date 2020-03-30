@@ -1,4 +1,4 @@
-package edu.pw.shoppingm8.config.security;
+package edu.pw.shoppingm8.base.config.security;
 
 import edu.pw.shoppingm8.user.User;
 import io.jsonwebtoken.Jwts;

@@ -1,4 +1,4 @@
-package edu.pw.shoppingm8.config;
+package edu.pw.shoppingm8.base.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

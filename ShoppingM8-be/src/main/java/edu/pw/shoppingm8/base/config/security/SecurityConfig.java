@@ -1,4 +1,4 @@
-package edu.pw.shoppingm8.config.security;
+package edu.pw.shoppingm8.base.config.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
