@@ -71,6 +71,17 @@ public class UserController {
         return ResponseEntity.ok(UserDto.of(userService.getAuthenticatedUser()));
     }
 
+    @ApiOperation(value = "Deregister", nickname = "delete user account", notes = "",
+            authorizations = {@Authorization(value = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "If valid credentials were provided"),
+            @ApiResponse(code = 400, message = "If invalid data was provided")})
+    @DeleteMapping("me")
+    ResponseEntity<Void> deregister() {
+        userService.deregister(userService.getAuthenticatedUser());
+        return ResponseEntity.noContent().build();
+    }
+
     @ApiOperation(value = "Get user info", nickname = "get user info", notes = "",
             authorizations = {@Authorization(value = "JWT")})
     @ApiResponses(value = {

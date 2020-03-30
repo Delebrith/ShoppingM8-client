@@ -12,4 +12,6 @@ public interface UserService {
     User getAuthenticatedUser();
 
     User getUser(Long id);
+
+    void deregister(User user);
 }
