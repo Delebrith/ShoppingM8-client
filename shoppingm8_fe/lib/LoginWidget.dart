@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -19,7 +18,7 @@ class _LoginWidgetState extends State<LoginWidget> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                  image: NetworkImage("https://live.staticflickr.com/65535/48369301137_482117c791_b.jpg"),
+                  image: AssetImage("assets/background.jpg"),
                   fit: BoxFit.cover
               ),
             ),

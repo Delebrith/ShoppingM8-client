@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoppingm8_fe/RegistrationWidget.dart';
 
 import 'LoginWidget.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           buttonColor: Colors.lightGreen,
           textTheme: ButtonTextTheme.normal,
           padding: EdgeInsets.all(5),
-        )
+        ),
       ),
       home: MyHomePage(),
     );
@@ -64,6 +65,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return LoginWidget();
+    return RegistartionWidget();
   }
 }
