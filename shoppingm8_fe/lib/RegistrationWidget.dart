@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RegistartionWidget extends StatefulWidget {
@@ -15,19 +16,24 @@ class _RegistartionWidgetState extends State<RegistartionWidget> {
 
   File _image;
 
-  Future getImageFromGallery() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+  Future getImage(ImageSource source) async {
+    var image = await ImagePicker.pickImage(source: source);
+    var croppedImage = await ImageCropper.cropImage(
+        sourcePath: image.path,
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+        compressQuality: 80,
+        maxWidth: 512,
+        maxHeight: 512,
+        androidUiSettings: AndroidUiSettings(
+          toolbarTitle: "Crop picture"
+        ),
+        iosUiSettings: IOSUiSettings(
+          title: "Crop picture"
+        )
+    );
 
     setState(() {
-      _image = image;
-    });
-  }
-
-  Future getImageFromCamera() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      _image = image;
+      _image = croppedImage;
     });
   }
 
@@ -85,12 +91,12 @@ class _RegistartionWidgetState extends State<RegistartionWidget> {
                                   IconButton(
                                     icon: Icon(Icons.camera_alt),
                                     color: Colors.lightGreen,
-                                    onPressed: getImageFromCamera,
+                                    onPressed: () => getImage(ImageSource.camera),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.photo),
                                     color: Colors.lightGreen,
-                                    onPressed: getImageFromGallery,
+                                    onPressed: () => getImage(ImageSource.gallery),
                                   )
                                 ],
                               ),
@@ -100,6 +106,7 @@ class _RegistartionWidgetState extends State<RegistartionWidget> {
                                   image: _image == null
                                       ? AssetImage("assets/user.jpg")
                                       : FileImage(_image),
+                                  height: 350,
                                 ),
                               )
                             ],
