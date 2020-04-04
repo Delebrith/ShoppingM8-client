@@ -55,7 +55,7 @@ class MainMenuWidget extends StatelessWidget {
                     MenuButton(
                       title: "My lists",
                       onPressed: moveToListScreen,
-                      color: Colors.green,
+                      color: Colors.greenAccent,
                       icon: Icons.format_list_bulleted,
                     ),
                     MenuButton(
@@ -72,13 +72,13 @@ class MainMenuWidget extends StatelessWidget {
                     MenuButton(
                       title: "My account",
                       onPressed: moveToAccountManagement,
-                      color: Colors.cyan,
+                      color: Colors.pinkAccent,
                       icon: Icons.person,
                     ),
                     MenuButton(
                       title: "Logout",
                       onPressed: logout,
-                      color: Colors.orangeAccent,
+                      color: Colors.orange,
                       icon: Icons.exit_to_app,
                     ),
                   ],
