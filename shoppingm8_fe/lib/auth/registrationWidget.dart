@@ -2,26 +2,40 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
+import 'package:shoppingm8_fe/auth/dto/registrationDto.dart';
+import 'package:shoppingm8_fe/common/dto/errorDto.dart';
+import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
+
+import 'dto/authenticationResponseDto.dart';
 
 class RegistrationWidget extends StatefulWidget {
+  final String serverUrl;
+
+  const RegistrationWidget({Key key, this.serverUrl}) : super(key: key);
+
   @override
-  _RegistrationWidgetState createState() => _RegistrationWidgetState();
+  _RegistrationWidgetState createState() => _RegistrationWidgetState(serverUrl);
 }
 
 class _RegistrationWidgetState extends State<RegistrationWidget> {
+  GlobalKey<FormState> _registrationForm = GlobalKey<FormState>();
+  AuthenticationApiProvider authenticationApiProvider;
+
   String _email;
   String _password;
   String _displayName;
-
-  GlobalKey<FormState> _registrationForm = GlobalKey<FormState>();
-
   File _image;
-
   var _autovalidate = false;
+
+  _RegistrationWidgetState(String serverUrl) {
+    authenticationApiProvider = AuthenticationApiProvider(serverUrl);
+  }
 
   Future getImage(ImageSource source) async {
     var image = await ImagePicker.pickImage(source: source);
@@ -138,7 +152,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                         FlatButton(
                           child: Text("REGISTER"),
                           color: Colors.lightGreen,
-                          onPressed: _register,
+                          onPressed: _submit,
                         )
                       ],
                     )
@@ -148,9 +162,10 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     );
   }
 
-  void _validateInputs() {
+  void _submit() {
     if (_registrationForm.currentState.validate()) {
       _registrationForm.currentState.save();
+      _register();
     } else {
       setState(() {
         _autovalidate = true;
@@ -177,36 +192,35 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
         : null;
   }
 
-  Future<void> _register() async {
-    _validateInputs();
-    var registrationResponse = await _sendRegistrationRequest();
-
-    if (registrationResponse.statusCode == 201)
-      print("YAY");
-    else
-      print("NAY " + registrationResponse.toString());
+  void _register() async {
+    http.StreamedResponse response = await authenticationApiProvider.register(
+        RegistrationDto(_email, _password, _displayName),
+        _image
+    );
+    if (response.statusCode == 201) {
+      var storage = FlutterSecureStorage();
+      var responseBody = AuthenticationResponseDto.fromJson(jsonDecode(await response.stream.bytesToString()));
+      storage.write(key: "JWT_access_token", value: responseBody.accessToken);
+      storage.write(key: "JWT_refresh_token", value: responseBody.refreshToken);
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => MainMenuWidget()));
+    } else {
+      var body = await response.stream.bytesToString();
+      showDialog(context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Could not register"),
+            content: new Text(ErrorDto.fromJson(json.decode(body)).message),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Close"),
+                onPressed: Navigator.of(context).pop,
+              )
+            ],
+          );
+        }
+      );
+    }
   }
 
-  Future<http.StreamedResponse> _sendRegistrationRequest() async {
-    var uri = Uri.parse("http://localhost:8080/user");
-    var request = http.MultipartRequest('POST', uri);
-    request..files.add(await http.MultipartFile.fromString(
-          "data",
-          jsonEncode({
-            'email': _email,
-            'password': _password,
-            'name': _displayName
-          }),
-          contentType: MediaType("application", "json"),
-      ));
-
-    if (_image != null)
-      request..files.add(await http.MultipartFile.fromPath(
-        "picture",
-        _image.path,
-        contentType: MediaType("image", "jpeg"),
-      ));
-
-    return request.send();
-  }
 }

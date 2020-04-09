@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 import 'menuButtonWidget.dart';
 
 class MainMenuWidget extends StatelessWidget {
-  final Function moveToListScreen;
-  final Function moveToFriendList;
-  final Function moveToAccountManagement;
-  final Function logout;
+  Function moveToListScreen;
+  Function moveToFriendList;
+  Function moveToAccountManagement;
+  Function logout;
 
-  const MainMenuWidget(
-      {Key key,
-      this.moveToListScreen,
-      this.moveToFriendList,
-      this.moveToAccountManagement,
-      this.logout})
-      : super(key: key);
+
+  MainMenuWidget() {
+    moveToAccountManagement = () => print("account");
+    moveToListScreen = () => print("lists");
+    moveToFriendList = () => print("friend");
+    logout = () => print("logout");
+  }
 
   @override
   Widget build(BuildContext context) {

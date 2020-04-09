@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: pszwed
+      changes:
+        - createTable:
+            tableName: refresh_token
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: token
+                  type: varchar2(64)
+              - column:
+                  name: valid
+                  type: boolean
+              - column:
+                  name: expires_at
+                  type: timestamp
+              - column:
+                  name: user_id
+                  type: bigint
+        - addForeignKeyConstraint:
+            baseTableName: refresh_token
+            baseColumnNames:
+              - user_id
+            constraintName: refresh_token_FK1
+            referencedTableName: User_
+            referencedColumnNames: id

@@ -1,7 +1,7 @@
-package edu.pw.shoppingm8.user.exception;
+package edu.pw.shoppingm8.authentication.exception;
 
 public class InvalidCredentialsException extends RuntimeException {
     public InvalidCredentialsException() {
-        super("Invalid email or password");
+        super("Invalid username or password");
     }
 }

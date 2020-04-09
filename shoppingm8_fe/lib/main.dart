@@ -1,8 +1,15 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shoppingm8_fe/auth/registrationWidget.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart' as storage;
+import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
+import 'package:shoppingm8_fe/auth/authenticationInterceptor.dart';
 import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
 
 import 'auth/loginWidget.dart';
+
+String serverUrl = "http://localhost:8080";
 
 void main() => runApp(MyApp());
 
@@ -45,13 +52,44 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Dio dio = Dio();
+  AuthenticationApiProvider authenticationApiProvider = AuthenticationApiProvider(serverUrl);
+  Widget _startingWidget = Scaffold();
+
+  _MyHomePageState() {
+    dio.interceptors.add(
+        AuthenticationInterceptor(
+            serverUrl: serverUrl,
+            dio: dio,
+            onAuthenticationError: _onAuthenticationError
+        )
+    );
+    dio.options.validateStatus = (status) => status < 500;
+    _getStartingWidget();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MainMenuWidget(
-      logout: () => print("logout"),
-      moveToAccountManagement: () => print("moveToAccountManagement"),
-      moveToFriendList: () => print("moveToFriendList"),
-      moveToListScreen: () => print("moveToListScreen"),);
+    return _startingWidget;
+  }
+
+  void _onAuthenticationError() {
+    var secureStorage = storage.FlutterSecureStorage();
+    secureStorage.write(key: "JWT_access_token", value: null);
+    secureStorage.write(key: "JWT_refresh_token", value: null);
+    Navigator.push(this.context, MaterialPageRoute(builder: (context) => LoginWidget()));
+  }
+
+  void _getStartingWidget() async {
+    var me = await authenticationApiProvider.me(dio);
+    if (me.statusCode == 200) {
+      setState(() {
+        _startingWidget = MainMenuWidget();
+      });
+    } else {
+      setState(() {
+        _startingWidget = LoginWidget(serverUrl: serverUrl);
+      });
+    }
   }
 }

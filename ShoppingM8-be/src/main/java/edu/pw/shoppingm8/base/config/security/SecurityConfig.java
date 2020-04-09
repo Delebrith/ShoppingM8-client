@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private static final String[] PUBLIC_POST_ANT_PATTERNS = {
-            "/user/login", "/user"
+            "/auth/login", "/auth/register", "/auth/refresh"
     };
 
     private final UserDetailsService userDetailsService;

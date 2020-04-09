@@ -1,13 +1,36 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
+import 'package:shoppingm8_fe/auth/dto/authenticationResponseDto.dart';
+import 'package:shoppingm8_fe/auth/dto/loginDto.dart';
+import 'package:shoppingm8_fe/auth/registrationWidget.dart';
+import 'package:shoppingm8_fe/common/dto/errorDto.dart';
+import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
 
 class LoginWidget extends StatefulWidget {
+  final String serverUrl;
+
+  const LoginWidget({Key key, this.serverUrl}) : super(key: key);
+
   @override
-  _LoginWidgetState createState() => _LoginWidgetState();
+  _LoginWidgetState createState() => _LoginWidgetState(serverUrl: serverUrl);
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  GlobalKey<FormState> _loginForm = GlobalKey<FormState>();
+  final String serverUrl;
+
+  String _email;
+  String _password;
+
+  AuthenticationApiProvider authenticationApiProvider;
+
+  _LoginWidgetState({this.serverUrl}) {
+    authenticationApiProvider = AuthenticationApiProvider(serverUrl);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,25 +63,33 @@ class _LoginWidgetState extends State<LoginWidget> {
                           textAlign: TextAlign.center,
                       )
                     ),
-                    TextField(
-                      autofocus: true,
-                      autocorrect: false,
-                      decoration: InputDecoration(labelText: "email"),
-                      controller: emailController,
-                    ),
-                    TextField(
-                      autofocus: false,
-                      autocorrect: false,
-                      decoration: InputDecoration(labelText: "password"),
-                      controller: passwordController,
-                      obscureText: true,
+                    Form(
+                      key: _loginForm,
+                      child: Column(
+                        children: <Widget>[
+                          TextFormField(
+                            autofocus: true,
+                            autocorrect: false,
+                            decoration: InputDecoration(labelText: "email"),
+                            keyboardType: TextInputType.emailAddress,
+                            onSaved: (value) => _email = value,
+                          ),
+                          TextFormField(
+                            autofocus: false,
+                            autocorrect: false,
+                            decoration: InputDecoration(labelText: "password"),
+                            obscureText: true,
+                            onSaved: (value) => _password = value,
+                          ),
+                        ],
+                      ),
                     ),
                     Container(
                       margin: EdgeInsets.all(10),
                       child: FlatButton(
                         child: Text("LOGIN"),
                         color: Colors.lightGreen,
-                        onPressed: () => {print("LOGIN")},
+                        onPressed: _login,
                       )
                     ),
                     Row(
@@ -146,7 +177,12 @@ class _LoginWidgetState extends State<LoginWidget> {
                               child: FlatButton(
                                 child: Text("REGISTER"),
                                 color: Colors.lightGreen,
-                                onPressed: () => {print("register")},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => RegistrationWidget(serverUrl: serverUrl))
+                                  );
+                                },
                               )
                           ),
                         ],
@@ -162,4 +198,40 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
   }
 
+  void _login() async {
+    _loginForm.currentState.save();
+    Response loginResponse = await authenticationApiProvider.login(LoginDto(email: _email, password: _password));
+    if (loginResponse.statusCode == 200)  {
+      _onLoginSuccess(loginResponse);
+    } else {
+      _onLoginError(loginResponse);
+    }
+  }
+
+
+  void _onLoginSuccess(Response response) {
+    var storage = FlutterSecureStorage();
+    var responseBody = AuthenticationResponseDto.fromJson(response.data);
+    storage.write(key: "JWT_access_token", value: responseBody.accessToken);
+    storage.write(key: "JWT_refresh_token", value: responseBody.refreshToken);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenuWidget()));
+  }
+
+  _onLoginError(Response response) {
+    var responseBody = ErrorDto.fromJson(jsonDecode(response.data));
+    showDialog(context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Could not register"),
+            content: new Text(responseBody.message),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Close"),
+                onPressed: Navigator.of(context).pop,
+              )
+            ],
+          );
+        }
+    );
+  }
 }
