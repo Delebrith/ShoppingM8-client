@@ -1,21 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shoppingm8_fe/auth/loginWidget.dart';
 
 import 'menuButtonWidget.dart';
 
 class MainMenuWidget extends StatelessWidget {
-  Function moveToListScreen;
-  Function moveToFriendList;
-  Function moveToAccountManagement;
-  Function logout;
+  final String serverUrl;
+  final Function moveToListScreen = () => print("lists");
+  final Function moveToFriendList = () => print("friend");
+  final Function moveToAccountManagement = () => print("account");
 
-
-  MainMenuWidget() {
-    moveToAccountManagement = () => print("account");
-    moveToListScreen = () => print("lists");
-    moveToFriendList = () => print("friend");
-    logout = () => print("logout");
-  }
+  MainMenuWidget({this.serverUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +73,7 @@ class MainMenuWidget extends StatelessWidget {
                     ),
                     MenuButton(
                       title: "Logout",
-                      onPressed: logout,
+                      onPressed: () => _logout(context),
                       color: Colors.orange,
                       icon: Icons.exit_to_app,
                     ),
@@ -92,5 +88,14 @@ class MainMenuWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    var storage = FlutterSecureStorage();
+    await storage.delete(key: "JWT_access_token");
+    await storage.delete(key: "JWT_refresh_token");
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => LoginWidget(serverUrl: serverUrl)
+    ));
   }
 }

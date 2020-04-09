@@ -1,6 +1,7 @@
 package edu.pw.shoppingm8.user;
 
 import edu.pw.shoppingm8.authentication.api.dto.UserRegistrationDto;
+import edu.pw.shoppingm8.user.exception.EmailAlreadyUsedException;
 import edu.pw.shoppingm8.user.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +25,9 @@ class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User register(UserRegistrationDto registrationDto, byte[] profilePicture) {
+        if (userRepository.existsByEmail(registrationDto.getEmail())) {
+            throw new EmailAlreadyUsedException();
+        }
         User registered = User.builder()
                 .email(registrationDto.getEmail())
                 .password(passwordEncoder.encode(registrationDto.getPassword()))

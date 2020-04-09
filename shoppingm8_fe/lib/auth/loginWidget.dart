@@ -214,7 +214,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     var responseBody = AuthenticationResponseDto.fromJson(response.data);
     storage.write(key: "JWT_access_token", value: responseBody.accessToken);
     storage.write(key: "JWT_refresh_token", value: responseBody.refreshToken);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenuWidget()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenuWidget(serverUrl: serverUrl,)));
   }
 
   _onLoginError(Response response) {

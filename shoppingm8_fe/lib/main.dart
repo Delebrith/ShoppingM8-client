@@ -60,11 +60,10 @@ class _MyHomePageState extends State<MyHomePage> {
     dio.interceptors.add(
         AuthenticationInterceptor(
             serverUrl: serverUrl,
-            dio: dio,
             onAuthenticationError: _onAuthenticationError
         )
     );
-    dio.options.validateStatus = (status) => status < 500;
+    dio.options.validateStatus = (status) => status < 500 && status != 401;
     _getStartingWidget();
   }
 
@@ -77,14 +76,14 @@ class _MyHomePageState extends State<MyHomePage> {
     var secureStorage = storage.FlutterSecureStorage();
     secureStorage.write(key: "JWT_access_token", value: null);
     secureStorage.write(key: "JWT_refresh_token", value: null);
-    Navigator.push(this.context, MaterialPageRoute(builder: (context) => LoginWidget()));
+    Navigator.push(this.context, MaterialPageRoute(builder: (context) => LoginWidget(serverUrl: serverUrl,)));
   }
 
   void _getStartingWidget() async {
     var me = await authenticationApiProvider.me(dio);
     if (me.statusCode == 200) {
       setState(() {
-        _startingWidget = MainMenuWidget();
+        _startingWidget = MainMenuWidget(serverUrl: serverUrl,);
       });
     } else {
       setState(() {

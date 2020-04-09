@@ -9,19 +9,21 @@ import 'package:shoppingm8_fe/auth/dto/authenticationResponseDto.dart';
 import 'package:shoppingm8_fe/auth/dto/refreshTokenDto.dart';
 
 class AuthenticationInterceptor extends dio_package.Interceptor {
-  final Dio dio;
   final Function onAuthenticationError;
   AuthenticationApiProvider authenticationApiProvider;
   FlutterSecureStorage secureStorage;
 
-  AuthenticationInterceptor({this.dio, this.onAuthenticationError, String serverUrl}) {
+  AuthenticationInterceptor({this.onAuthenticationError, String serverUrl}) {
     this.authenticationApiProvider = AuthenticationApiProvider(serverUrl);
     this.secureStorage = FlutterSecureStorage();
   }
 
   @override
   Future onRequest(RequestOptions options) async {
-    options.headers.addEntries([MapEntry("Authorization", "Bearer " + await secureStorage.read(key: "JWT_access_token"))]);
+    var token = await secureStorage.read(key: "JWT_access_token");
+    if (token != null) {
+      options.headers.addEntries([MapEntry("Authorization", "Bearer " + token)]);
+    }
     return options;
   }
 
@@ -38,11 +40,13 @@ class AuthenticationInterceptor extends dio_package.Interceptor {
   }
 
   Future<void> _refreshToken() async {
-    var refreshTokenDto = RefreshTokenDto(await secureStorage.read(key: "JWT_refresh_token"));
-    var authenticationResponse  = await authenticationApiProvider.refresh(
-        refreshTokenDto);
-    if (authenticationResponse.statusCode == 200) {
-      _updateAccessToken(authenticationResponse);
+    var token = await secureStorage.read(key: "JWT_refresh_token");
+    if (token != null) {
+      var refreshTokenDto = RefreshTokenDto(token);
+      var authenticationResponse  = await authenticationApiProvider.refresh(refreshTokenDto);
+      if (authenticationResponse.statusCode == 200) {
+        _updateAccessToken(authenticationResponse);
+      }
     }
   }
 
@@ -54,17 +58,25 @@ class AuthenticationInterceptor extends dio_package.Interceptor {
 
   Future<Response> _repeatRequest(DioError err) async {
     var requestOptions = err.request;
-    requestOptions.headers.addEntries([MapEntry("Authorization", await secureStorage.read(key: "JWT_access_token"))]);
+    var token = await secureStorage.read(key: "JWT_access_token");
+    if (token != null) {
+      requestOptions.headers.addEntries([MapEntry("Authorization", token)]);
+    }
 
     final dio_package.Options options = dio_package.Options(
       method: requestOptions.method,
       headers: requestOptions.headers,
+      extra: requestOptions.extra,
+      contentType: requestOptions.contentType,
+      validateStatus: (status) => true,
     );
 
-    return dio.request(requestOptions.path,
+    var repeatDio = Dio();
+    return repeatDio.request(requestOptions.path,
       data: requestOptions.data,
       queryParameters: requestOptions.queryParameters,
       options: options
     );
   }
+
 }

@@ -10,6 +10,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
 import 'package:shoppingm8_fe/auth/dto/registrationDto.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
+import 'package:shoppingm8_fe/main.dart';
 import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
 
 import 'dto/authenticationResponseDto.dart';
@@ -25,6 +26,7 @@ class RegistrationWidget extends StatefulWidget {
 
 class _RegistrationWidgetState extends State<RegistrationWidget> {
   GlobalKey<FormState> _registrationForm = GlobalKey<FormState>();
+  String serverUrl;
   AuthenticationApiProvider authenticationApiProvider;
 
   String _email;
@@ -34,6 +36,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   var _autovalidate = false;
 
   _RegistrationWidgetState(String serverUrl) {
+    this.serverUrl = serverUrl;
     authenticationApiProvider = AuthenticationApiProvider(serverUrl);
   }
 
@@ -203,7 +206,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
       storage.write(key: "JWT_access_token", value: responseBody.accessToken);
       storage.write(key: "JWT_refresh_token", value: responseBody.refreshToken);
       Navigator.push(context,
-          MaterialPageRoute(builder: (context) => MainMenuWidget()));
+          MaterialPageRoute(builder: (context) => MainMenuWidget(serverUrl: serverUrl,)));
     } else {
       var body = await response.stream.bytesToString();
       showDialog(context: context,
