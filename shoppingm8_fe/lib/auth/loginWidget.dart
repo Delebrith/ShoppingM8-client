@@ -49,8 +49,9 @@ class _LoginWidgetState extends State<LoginWidget> {
           Center(
             child: Card(
               margin: EdgeInsets.all(40.0),
+              child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.all(30),
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -58,7 +59,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     Title(
                       color: Colors.black,
                       child: Text(
-                          "Please, login to your ShoppingM8!",
+                          "Sign in to your ShoppingM8!",
                           style: TextStyle(fontSize: 24),
                           textAlign: TextAlign.center,
                       )
@@ -87,7 +88,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     Container(
                       margin: EdgeInsets.all(10),
                       child: FlatButton(
-                        child: Text("LOGIN"),
+                        child: Text("SIGN IN"),
                         color: Colors.lightGreen,
                         onPressed: _login,
                       )
@@ -123,10 +124,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     image: AssetImage("assets/google.png"),
                                     height: 25.0,
                                   ),
-                                  Container(
-                                    width: 230,
+                                  Expanded(
                                     child: Text(
-                                      "Login with Google",
+                                      "Sign in with Google",
                                       textAlign: TextAlign.center,
                                     ),
                                   )
@@ -148,10 +148,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     image: AssetImage("assets/facebook.png"),
                                     height: 25.0,
                                   ),
-                                  Container(
-                                    width: 240,
+                                  Expanded(
                                     child: Text(
-                                      "Login with Facebook",
+                                      "Sign in with Facebook",
                                       textAlign: TextAlign.center,
                                     ),
                                   )
@@ -163,8 +162,11 @@ class _LoginWidgetState extends State<LoginWidget> {
                       )
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 40),
-                      child: Column(
+                      alignment: Alignment.bottomCenter,
+                      child: Flex(
+                        direction: Axis.vertical,
+                        verticalDirection: VerticalDirection.down,
+                        mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           Text(
                               "Don't have the account yet?",
@@ -173,7 +175,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                             ),
                           ),
                           Container(
-                              margin: EdgeInsets.only(top: 10),
+                              margin: EdgeInsets.all(5),
                               child: FlatButton(
                                 child: Text("REGISTER"),
                                 color: Colors.lightGreen,
@@ -190,6 +192,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     )
                   ],
                 )
+              )
               )
             ),
           )

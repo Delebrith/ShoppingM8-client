@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -53,18 +54,39 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Dio dio = Dio();
-  AuthenticationApiProvider authenticationApiProvider = AuthenticationApiProvider(serverUrl);
-  Widget _startingWidget = Scaffold();
+  AuthenticationApiProvider authenticationApiProvider =
+      AuthenticationApiProvider(serverUrl);
+  Widget _startingWidget = Center();
+  bool _serverResponding = false;
 
   _MyHomePageState() {
-    dio.interceptors.add(
-        AuthenticationInterceptor(
-            serverUrl: serverUrl,
-            onAuthenticationError: _onAuthenticationError
-        )
-    );
+    dio.interceptors.add(AuthenticationInterceptor(
+        serverUrl: serverUrl, onAuthenticationError: _onAuthenticationError));
     dio.options.validateStatus = (status) => status < 500 && status != 401;
-    _getStartingWidget();
+    dio.options.connectTimeout = 2000;
+    _setStartingWidget();
+    Timer(Duration(seconds: 5), () {
+      _showDialogIfServerNotResponding();
+    });
+  }
+
+  void _showDialogIfServerNotResponding() {
+    if (!_isServerResponding()) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Could not connect to server"),
+              content: Text("Try again later."),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Close"),
+                  onPressed: () {exit(0);}
+                )
+              ],
+            );
+          });
+    }
   }
 
   @override
@@ -76,19 +98,34 @@ class _MyHomePageState extends State<MyHomePage> {
     var secureStorage = storage.FlutterSecureStorage();
     secureStorage.write(key: "JWT_access_token", value: null);
     secureStorage.write(key: "JWT_refresh_token", value: null);
-    Navigator.push(this.context, MaterialPageRoute(builder: (context) => LoginWidget(serverUrl: serverUrl,)));
+    Navigator.push(
+        this.context,
+        MaterialPageRoute(
+            builder: (context) => LoginWidget(
+                  serverUrl: serverUrl,
+                )));
   }
 
-  void _getStartingWidget() async {
-    var me = await authenticationApiProvider.me(dio);
-    if (me.statusCode == 200) {
-      setState(() {
-        _startingWidget = MainMenuWidget(serverUrl: serverUrl,);
-      });
-    } else {
-      setState(() {
-        _startingWidget = LoginWidget(serverUrl: serverUrl);
-      });
+  void _setStartingWidget() async {
+    try {
+      var me = await authenticationApiProvider.me(dio);
+      if (me.statusCode == 200) {
+        setState(() {
+          _startingWidget = MainMenuWidget(
+            serverUrl: serverUrl,
+          );
+          _serverResponding = true;
+        });
+      }
+    } on DioError catch (e) {
+      print(e);
+      if (e.type == DioErrorType.RESPONSE) {
+        _serverResponding = true;
+      }
     }
+  }
+
+  bool _isServerResponding() {
+    return _serverResponding;
   }
 }

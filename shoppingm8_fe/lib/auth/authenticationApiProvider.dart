@@ -21,6 +21,7 @@ class AuthenticationApiProvider {
 
   AuthenticationApiProvider(String serverUrl) {
     this.dio = Dio();
+    dio.options.connectTimeout = 2000;
     this.uri = Uri.parse(serverUrl + "/" + _authenticationEndpoint + "/");
   }
 
