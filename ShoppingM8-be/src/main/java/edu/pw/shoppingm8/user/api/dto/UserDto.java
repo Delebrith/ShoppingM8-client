@@ -7,12 +7,13 @@ import lombok.Value;
 public class UserDto {
     private static final String USER_PICTURE_URL_TEMPLATE = "/user/{id}/picture";
 
+    Long id;
     String email;
     String name;
     String profilePicture;
 
     public static UserDto of(User user) {
-        return new UserDto(user.getEmail(), user.getName(), UserDto.buildProfilePictureUrl(user.getId()));
+        return new UserDto(user.getId(), user.getEmail(), user.getName(), UserDto.buildProfilePictureUrl(user.getId()));
     }
 
     private static String buildProfilePictureUrl(Long id) {

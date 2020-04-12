@@ -1,21 +1,14 @@
 package edu.pw.shoppingm8.user;
 
-import edu.pw.shoppingm8.user.api.dto.UserRegistrationDto;
-import edu.pw.shoppingm8.user.exception.InvalidCredentialsException;
+import edu.pw.shoppingm8.authentication.api.dto.UserRegistrationDto;
+import edu.pw.shoppingm8.user.exception.EmailAlreadyUsedException;
 import edu.pw.shoppingm8.user.exception.UserNotFoundException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.security.Principal;
-import java.util.Date;
-import java.util.Optional;
 
 @Service
 class UserServiceImpl implements UserService, UserDetailsService {
@@ -31,19 +24,10 @@ class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User login(String email, String password) {
-        final User user = userRepository.findByEmail(email)
-                .orElseThrow(UserNotFoundException::new);
-        final boolean passwordMatches = passwordEncoder.matches(password, user.getPassword());
-        if (passwordMatches) {
-            return user;
-        } else {
-            throw new InvalidCredentialsException();
-        }
-    }
-
-    @Override
     public User register(UserRegistrationDto registrationDto, byte[] profilePicture) {
+        if (userRepository.existsByEmail(registrationDto.getEmail())) {
+            throw new EmailAlreadyUsedException();
+        }
         User registered = User.builder()
                 .email(registrationDto.getEmail())
                 .password(passwordEncoder.encode(registrationDto.getPassword()))
@@ -54,25 +38,13 @@ class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public String getUsersToken(User user) {
-        return Jwts.builder()
-                .setSubject(user.getEmail())
-                .setIssuedAt(new Date())
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
-    }
-
-    @Override
-    public User getAuthenticatedUser() {
-        final String email = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                .map(Principal::getName)
-                .orElseThrow(IllegalStateException::new);
-        return userRepository.findByEmail(email).orElseThrow(IllegalStateException::new);
-    }
-
-    @Override
     public User getUser(Long id) {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }
 
     @Override
