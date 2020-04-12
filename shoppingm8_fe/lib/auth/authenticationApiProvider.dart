@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:shoppingm8_fe/auth/dto/loginDto.dart';
 import 'package:shoppingm8_fe/auth/dto/registrationDto.dart';
+import 'package:shoppingm8_fe/auth/dto/socialMediaLoginDto.dart';
 
 import 'dto/refreshTokenDto.dart';
 
@@ -58,6 +59,10 @@ class AuthenticationApiProvider {
         ));
   }
 
+  Future<Response> socialMediaLogin(String media, SocialMediaLoginDto socialMediaLoginDto) async {
+    return _sendPostRequest("$_loginEndpoint/$media", socialMediaLoginDto);
+  }
+  
   Future<Response> _sendPostRequest(String endpoint, Object body) {
     return dio.postUri(uri.resolve(endpoint),
         data: jsonEncode(body),
