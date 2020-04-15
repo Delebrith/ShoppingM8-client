@@ -1,11 +1,17 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
 import 'package:shoppingm8_fe/auth/dto/authenticationResponseDto.dart';
 import 'package:shoppingm8_fe/auth/dto/loginDto.dart';
+import 'package:shoppingm8_fe/auth/dto/socialMediaLoginDto.dart';
 import 'package:shoppingm8_fe/auth/registrationWidget.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
@@ -31,6 +37,9 @@ class _LoginWidgetState extends State<LoginWidget> {
   _LoginWidgetState({this.serverUrl}) {
     authenticationApiProvider = AuthenticationApiProvider(serverUrl);
   }
+  
+  final _googleSignIn = new GoogleSignIn(scopes: ['email']);
+  final _facebookSignIn = FacebookLogin();
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +141,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   )
                                 ],
                               ),
+                              onPressed: _googleLogin,
                             ),
                           ),
                           Container(
@@ -156,6 +166,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   )
                                 ],
                               ),
+                              onPressed: _facebookLogin,
                             ),
                           ),
                         ],
@@ -201,16 +212,41 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
   }
 
+  void _googleLogin() async {
+    final result = await _googleSignIn.signIn();
+    if (_googleSignIn.currentUser != null) {
+      final auth = await result.authentication;
+      final token = auth.accessToken;
+      await _socialMediaLogin("google", token);
+    }
+  }
+
+  void _facebookLogin() async {
+    final result = await _facebookSignIn.logIn(["email"]);
+    if (result.status == FacebookLoginStatus.loggedIn) {
+      final token = result.accessToken.token;
+      await _socialMediaLogin("facebook", token);
+    }
+  }
+
+  Future<void> _socialMediaLogin(String media, String token) async {
+    Response loginResponse = await authenticationApiProvider.socialMediaLogin(media, SocialMediaLoginDto(token: token));
+    finalizeLogin(loginResponse);
+  }
+
   void _login() async {
     _loginForm.currentState.save();
     Response loginResponse = await authenticationApiProvider.login(LoginDto(email: _email, password: _password));
+    finalizeLogin(loginResponse);
+  }
+
+  void finalizeLogin(Response loginResponse) {
     if (loginResponse.statusCode == 200)  {
       _onLoginSuccess(loginResponse);
     } else {
       _onLoginError(loginResponse);
     }
   }
-
 
   void _onLoginSuccess(Response response) {
     var storage = FlutterSecureStorage();

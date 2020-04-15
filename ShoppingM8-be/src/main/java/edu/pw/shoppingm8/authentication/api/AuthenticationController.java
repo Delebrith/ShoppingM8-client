@@ -18,6 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("auth")
@@ -100,4 +103,28 @@ public class AuthenticationController {
         userService.deregister(authenticationService.getAuthenticatedUser());
         return ResponseEntity.noContent().build();
     }
+
+    @ApiOperation(value = "Login via facebook", nickname = "facebook login", notes = "")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "If valid data was provided", response = TokenDto.class),
+        @ApiResponse(code = 400, message = "If invalid data was provided")})
+    @PostMapping(value="login/facebook")
+    ResponseEntity<TokenDto> facebookLogin(@RequestBody SocialMediaLoginDto socialMediaLoginDto) {
+        //TODO: process POST request
+        
+        return ResponseEntity.noContent().build();
+    }
+    
+    @ApiOperation(value = "Login via google", nickname = "google login", notes = "")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "If valid data was provided", response = TokenDto.class),
+        @ApiResponse(code = 400, message = "If invalid data was provided")})
+    @PostMapping(value="login/google")
+    ResponseEntity<TokenDto> googleLogin(@RequestBody SocialMediaLoginDto socialMediaLoginDto) {
+        //TODO: process POST request
+        
+        return ResponseEntity.noContent().build();
+    }
+    
+
 }
