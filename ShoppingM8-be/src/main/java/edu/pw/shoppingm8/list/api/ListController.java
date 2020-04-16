@@ -10,6 +10,7 @@ import edu.pw.shoppingm8.authentication.AuthenticationService;
 import edu.pw.shoppingm8.list.List;
 import edu.pw.shoppingm8.list.ListService;
 import edu.pw.shoppingm8.list.api.dto.ListDto;
+import edu.pw.shoppingm8.list.api.dto.ListModificationDto;
 import edu.pw.shoppingm8.user.User;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Slf4j
 public class ListController {
     private final ListService listService;
-    private final AuthenticationService authenticationService;
 
     @ApiOperation(value = "Create list", nickname = "create list", notes = "",
             authorizations = {@Authorization(value = "JWT")})
@@ -32,11 +32,8 @@ public class ListController {
         @ApiResponse(code = 201, message = "If list was created", response = ListDto.class),
         @ApiResponse(code = 400, message = "If request has list id or owner id set")})
     @PostMapping(value="/new")
-    ResponseEntity<ListDto> createList(@RequestBody ListDto listDto) {
-        if (listDto.getId() != null || listDto.getOwnerId() != null)
-            return ResponseEntity.badRequest().build();
-
-        List created = listService.create(listDto);
+    ResponseEntity<ListDto> createList(@RequestBody ListModificationDto listModificationDto) {
+        List created = listService.create(listModificationDto);
         return ResponseEntity.created(URI.create("/list/" + created.getId()))
             .body(ListDto.of(created));
     }
@@ -50,13 +47,8 @@ public class ListController {
     })
     @GetMapping(value="/{id}")
     ResponseEntity<ListDto> getList(@PathVariable Long id) {
-        User authenticatedUser = authenticationService.getAuthenticatedUser();
-
         List list = listService.getList(id);
-        if (!authenticatedUser.getId().equals(list.getOwner().getId()))
-            // TODO in future allow access for non-owner members of the list
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        
+        listService.checkIfUserHasAccessTo(list);
         return ResponseEntity.ok(ListDto.of(list));
     }
 
@@ -68,19 +60,9 @@ public class ListController {
         @ApiResponse(code = 404, message = "If list does not exist"),
     })
     @PatchMapping(value="/{id}")
-    ResponseEntity<Void> updateList(@PathVariable Long id, @RequestBody ListDto listDto) {
-        User authenticatedUser = authenticationService.getAuthenticatedUser();
-        
-        if (listDto.getId() != null)
-            return ResponseEntity.badRequest().build();
-
+    ResponseEntity<Void> updateList(@PathVariable Long id, @RequestBody ListModificationDto listModificationDto) {
         List list = listService.getList(id);
-
-        if (!authenticatedUser.getId().equals(list.getOwner().getId()))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        
-        listService.update(list, listDto);
-
+        listService.update(list, listModificationDto);
         return ResponseEntity.ok().build();
     }
     
@@ -93,11 +75,7 @@ public class ListController {
     })
     @DeleteMapping(value="/{id}")
     ResponseEntity<ListDto> deleteList(@PathVariable Long id) {
-        User authenticatedUser = authenticationService.getAuthenticatedUser();
-
         List list = listService.getList(id);
-        if (!authenticatedUser.getId().equals(list.getOwner().getId()))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         listService.delete(list);
         return ResponseEntity.ok().build();
     }
