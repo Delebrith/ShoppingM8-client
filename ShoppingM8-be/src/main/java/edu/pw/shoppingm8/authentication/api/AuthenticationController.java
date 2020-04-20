@@ -110,9 +110,11 @@ public class AuthenticationController {
         @ApiResponse(code = 400, message = "If invalid data was provided")})
     @PostMapping(value="login/facebook")
     ResponseEntity<TokenDto> facebookLogin(@RequestBody SocialMediaLoginDto socialMediaLoginDto) {
-        //TODO: process POST request
-        
-        return ResponseEntity.noContent().build();
+        User authenticated = authenticationService.authenticateWithFacebook(socialMediaLoginDto);
+        return ResponseEntity.ok(TokenDto.builder()
+                .accessToken(authenticationService.getAccessToken(authenticated))
+                .refreshToken(authenticationService.getRefreshToken(authenticated))
+                .build());
     }
     
     @ApiOperation(value = "Login via google", nickname = "google login", notes = "")
@@ -121,9 +123,11 @@ public class AuthenticationController {
         @ApiResponse(code = 400, message = "If invalid data was provided")})
     @PostMapping(value="login/google")
     ResponseEntity<TokenDto> googleLogin(@RequestBody SocialMediaLoginDto socialMediaLoginDto) {
-        //TODO: process POST request
-        
-        return ResponseEntity.noContent().build();
+        User authenticated = authenticationService.authenticateWithGoogle(socialMediaLoginDto);
+        return ResponseEntity.ok(TokenDto.builder()
+                .accessToken(authenticationService.getAccessToken(authenticated))
+                .refreshToken(authenticationService.getRefreshToken(authenticated))
+                .build());
     }
     
 

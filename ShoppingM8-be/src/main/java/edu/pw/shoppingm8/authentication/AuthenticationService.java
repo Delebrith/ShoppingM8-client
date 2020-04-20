@@ -1,5 +1,6 @@
 package edu.pw.shoppingm8.authentication;
 
+import edu.pw.shoppingm8.authentication.api.dto.SocialMediaLoginDto;
 import edu.pw.shoppingm8.user.User;
 
 public interface AuthenticationService {
@@ -14,4 +15,8 @@ public interface AuthenticationService {
     String getRefreshToken(User user);
 
     User getAuthenticatedUser();
+
+    User authenticateWithGoogle(SocialMediaLoginDto socialMediaLoginDto);
+
+    User authenticateWithFacebook(SocialMediaLoginDto socialMediaLoginDto);
 }
