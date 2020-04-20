@@ -31,7 +31,7 @@ public class ListController {
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "If list was created", response = ListDto.class),
         @ApiResponse(code = 400, message = "If request has list id or owner id set")})
-    @PostMapping(value="/new")
+    @PostMapping
     ResponseEntity<ListDto> createList(@RequestBody ListModificationDto listModificationDto) {
         List created = listService.create(listModificationDto);
         return ResponseEntity.created(URI.create("/list/" + created.getId()))
