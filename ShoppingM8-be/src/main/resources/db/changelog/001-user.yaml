@@ -27,8 +27,6 @@ databaseChangeLog:
               - column:
                   name: password
                   type: varchar2(255)
-                  constraints:
-                    nullable: false
               - column:
                   name: profile_picture
                   type: blob

@@ -1,15 +1,21 @@
 package edu.pw.shoppingm8.authentication;
 
+import edu.pw.shoppingm8.authentication.api.dto.SocialMediaLoginDto;
 import edu.pw.shoppingm8.authentication.db.RefreshToken;
 import edu.pw.shoppingm8.authentication.db.RefreshTokenRepository;
+import edu.pw.shoppingm8.authentication.exception.InvalidAuthenticationMethodException;
 import edu.pw.shoppingm8.authentication.exception.InvalidCredentialsException;
 import edu.pw.shoppingm8.authentication.exception.RefreshTokenIsNotValidException;
 import edu.pw.shoppingm8.authentication.exception.RefreshTokenNotFoundException;
+import edu.pw.shoppingm8.authentication.social.SocialMediaProfileDto;
+import edu.pw.shoppingm8.authentication.social.SocialMediaService;
 import edu.pw.shoppingm8.user.UserService;
+import edu.pw.shoppingm8.user.exception.UserNotFoundException;
 import edu.pw.shoppingm8.user.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,19 +38,28 @@ class AuthenticationServiceImpl implements AuthenticationService {
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final byte[] secretKey;
+    private final SocialMediaService socialMediaServiceGoogle;
+    private final SocialMediaService socialMediaServiceFacebook;
 
     AuthenticationServiceImpl(RefreshTokenRepository refreshTokenRepository,
                               UserService userService,
-                              @Value("${shoppingM8.security.secretKey}") String secretKey) {
+                              @Value("${shoppingM8.security.secretKey}") String secretKey,
+                              @Qualifier(value="socialMediaServiceGoogleImpl") SocialMediaService socialMediaServiceGoogle,
+                              @Qualifier(value="socialMediaServiceFacebookImpl") SocialMediaService socialMediaServiceFacebook) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.userService = userService;
         this.secretKey = secretKey.getBytes(StandardCharsets.UTF_8);
         passwordEncoder = new BCryptPasswordEncoder();
+        
+        this.socialMediaServiceGoogle = socialMediaServiceGoogle;
+        this.socialMediaServiceFacebook = socialMediaServiceFacebook;
     }
 
     @Override
     public User authenticate(String email, String password) {
         final User user = userService.getUserByEmail(email);
+        if (user.getPassword() == null)
+            throw new InvalidAuthenticationMethodException();
         final boolean passwordMatches = passwordEncoder.matches(password, user.getPassword());
         if (passwordMatches) {
             return user;
@@ -105,4 +120,28 @@ class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(IllegalStateException::new);
     }
 
+    @Override
+    public User authenticateWithGoogle(SocialMediaLoginDto socialMediaLoginDto) {
+        return authenticateWithSocialMedia(socialMediaLoginDto, this.socialMediaServiceGoogle);
+    }
+    
+    @Override
+    public User authenticateWithFacebook(SocialMediaLoginDto socialMediaLoginDto) {
+        return authenticateWithSocialMedia(socialMediaLoginDto, this.socialMediaServiceFacebook);
+    }
+
+    private User authenticateWithSocialMedia(SocialMediaLoginDto socialMediaLoginDto, SocialMediaService socialMediaService) {
+        SocialMediaProfileDto socialMediaProfile = socialMediaService.getProfile(socialMediaLoginDto);
+        
+        User user = null;
+        
+        try {
+            user = userService.getUserByEmail(socialMediaProfile.getEmail());
+        } catch (UserNotFoundException exception) {
+            byte[] picture = socialMediaService.getPicture(socialMediaProfile);
+            user = userService.register(socialMediaProfile, picture);
+        }
+        
+        return user;
+    }
 }
