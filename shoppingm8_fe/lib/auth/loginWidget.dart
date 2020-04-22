@@ -18,23 +18,25 @@ import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
 
 class LoginWidget extends StatefulWidget {
   final String serverUrl;
+  final Dio dio;
 
-  const LoginWidget({Key key, this.serverUrl}) : super(key: key);
+  const LoginWidget({Key key, this.serverUrl, this.dio}) : super(key: key);
 
   @override
-  _LoginWidgetState createState() => _LoginWidgetState(serverUrl: serverUrl);
+  _LoginWidgetState createState() => _LoginWidgetState(serverUrl: serverUrl, dio: dio);
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
   GlobalKey<FormState> _loginForm = GlobalKey<FormState>();
   final String serverUrl;
+  final Dio dio;
 
   String _email;
   String _password;
 
   AuthenticationApiProvider authenticationApiProvider;
 
-  _LoginWidgetState({this.serverUrl}) {
+  _LoginWidgetState({this.serverUrl, this.dio}) {
     authenticationApiProvider = AuthenticationApiProvider(serverUrl);
   }
   
@@ -193,7 +195,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => RegistrationWidget(serverUrl: serverUrl))
+                                    MaterialPageRoute(builder: (context) => RegistrationWidget(serverUrl: serverUrl, dio:dio))
                                   );
                                 },
                               )
@@ -253,7 +255,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     var responseBody = AuthenticationResponseDto.fromJson(response.data);
     storage.write(key: "JWT_access_token", value: responseBody.accessToken);
     storage.write(key: "JWT_refresh_token", value: responseBody.refreshToken);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenuWidget(serverUrl: serverUrl,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenuWidget(serverUrl: serverUrl, dio: dio)));
   }
 
   _onLoginError(Response response) {
