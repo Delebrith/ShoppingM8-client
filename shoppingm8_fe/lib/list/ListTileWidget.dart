@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
 import 'package:shoppingm8_fe/list/dto/listResponseDto.dart';
 import 'package:shoppingm8_fe/user/userLabelWidget.dart';
 
 class ListTileWidget extends StatelessWidget {
   final ListResponseDto listDto;
+  final Function goToProductsListWidget;
 
   var _memberLabels = <Widget>[
     Container(
@@ -13,14 +15,14 @@ class ListTileWidget extends StatelessWidget {
     ),
   ];
 
-  ListTileWidget({Key key, this.listDto}) : super(key: key); // TODO set member labels
+  ListTileWidget({Key key, this.listDto, this.goToProductsListWidget}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      padding: EdgeInsets.only(bottom: 70, top: 60, left: 20, right: 20),
+      padding: EdgeInsets.only(bottom: 70, top: 30, left: 20, right: 20),
       child: Card(
         color: Colors.white,
         child: Padding(
@@ -31,14 +33,30 @@ class ListTileWidget extends StatelessWidget {
             children: <Widget>[
               Container(
                 padding: EdgeInsets.symmetric(vertical: 20),
-                child:
-                Title(
-                  color: Colors.black,
-                  child: Text(listDto.name,
-                      style: TextStyle(
-                        fontSize: 32,
-                      )
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Title(
+                          color: Colors.black,
+                          child: Text(listDto.name,
+                              style: TextStyle(
+                                fontSize: 32,
+                              )
+                          ),
+                        ),
+                      ),
+                    ),
+                    RoundButtonWidget(
+                      color: Colors.lightBlueAccent,
+                      icon: Icons.forward,
+                      onPressed: () => goToProductsListWidget(context),
+                      radius: 25,
+                    ),
+                  ],
                 ),
               ),
               Row(

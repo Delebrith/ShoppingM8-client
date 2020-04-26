@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
 import 'package:shoppingm8_fe/list/listApiProvider.dart';
 import 'package:shoppingm8_fe/list/listCreationDialog.dart';
+import 'package:shoppingm8_fe/list/product/productsListWidget.dart';
 
 import 'ListTileWidget.dart';
 import 'dto/listResponseDto.dart';
@@ -42,6 +43,9 @@ class _MyListsWidgetState extends State<StatefulWidget> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      appBar: AppBar(
+        title: Text("My shopping lists"),
+      ),
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: <Widget>[
@@ -91,8 +95,13 @@ class _MyListsWidgetState extends State<StatefulWidget> {
         print(responseBody);
         List<ListResponseDto> dtos = responseBody.map((dto) => ListResponseDto.fromJson(dto)).toList();
         if (dtos.isNotEmpty)
-          lists = dtos.map((dto) => ListTileWidget(listDto: dto,)).toList();
+          lists = dtos.map((dto) => ListTileWidget(listDto: dto, goToProductsListWidget: _goToProductsWidget(dto),)).toList();
       });
     }
+  }
+
+  Function _goToProductsWidget(ListResponseDto dto) {
+    return (context) => Navigator.push(context, MaterialPageRoute(
+        builder: (context) => ProductsListWidget(serverUrl: serverUrl, dio: dio, id: dto.id, name: dto.name,)));
   }
 }
