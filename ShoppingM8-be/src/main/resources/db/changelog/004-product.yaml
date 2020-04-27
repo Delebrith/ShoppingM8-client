@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: jlyskawa
+      changes:
+        - createTable:
+            tableName: Product
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar2(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: list_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: category
+                  type: varchar2(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit
+                  type: varchar2(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: current_quantity
+                  type: decimal
+                  constraints:
+                    nullable: false
+              - column:
+                  name: required_quantity
+                  type: decimal
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: Product
+            baseColumnNames:
+              - list_id
+            constraintName: Product_FK1
+            referencedTableName: List
+            referencedColumnNames: id
