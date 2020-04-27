@@ -20,12 +20,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getProducts(Long listId) {
-        return productRepository.findByList(listService.getList(listId));
+        listService.checkIfListExistsAndUserHasAccess(listId);
+        return productRepository.findByListId(listId);
     }
 
     @Override
     public Product getProduct(Long listId, Long productId) {
-        return productRepository.findById(new ProductId(productId, listService.getList(listId)))
+        listService.checkIfListExistsAndUserHasAccess(listId);
+        return productRepository.findById(new ProductId(productId, listId))
                 .orElseThrow(ProductNotFoundException::new);
     }
 
@@ -39,9 +41,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product createProduct(Long listId, ProductCreateRequestDto productDto) {
-        edu.pw.shoppingm8.list.List list = listService.getList(listId);
+        listService.checkIfListExistsAndUserHasAccess(listId);
         Product product = Product.builder()
-            .list(list)
+            .listId(listId)
             .name(productDto.getName())
             .unit(productDto.getUnit())
             .requiredAmount(productDto.getRequiredAmount())

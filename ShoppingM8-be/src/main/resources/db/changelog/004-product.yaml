@@ -35,12 +35,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: current_quantity
+                  name: required_amount
                   type: decimal
                   constraints:
                     nullable: false
               - column:
-                  name: required_quantity
+                  name: purchased_amount
                   type: decimal
                   constraints:
                     nullable: false

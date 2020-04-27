@@ -3,12 +3,10 @@ package edu.pw.shoppingm8.list;
 import org.springframework.stereotype.Service;
 
 import edu.pw.shoppingm8.authentication.AuthenticationService;
-import edu.pw.shoppingm8.list.api.dto.ListDto;
 import edu.pw.shoppingm8.list.api.dto.ListModificationDto;
 import edu.pw.shoppingm8.list.exception.ForbiddenListOperationException;
 import edu.pw.shoppingm8.list.exception.ListNotFoundException;
 import edu.pw.shoppingm8.user.User;
-import edu.pw.shoppingm8.user.UserService;
 import lombok.AllArgsConstructor;
 
 import java.util.Collection;
@@ -52,7 +50,7 @@ public class ListServiceImpl implements ListService {
 	@Override
 	public void checkIfUserHasAccessTo(List list) {
         User authenticatedUser = authenticationService.getAuthenticatedUser();
-        if (list.getOwner().getId().equals(authenticatedUser.getId())) 
+        if (!list.getOwner().getId().equals(authenticatedUser.getId())) 
             // TODO replace with check if user is a member
             throw new ForbiddenListOperationException();
     }
@@ -60,7 +58,7 @@ public class ListServiceImpl implements ListService {
     @Override
     public void checkIfUserIsOwner(List list) {
         User authenticatedUser = authenticationService.getAuthenticatedUser();
-        if (list.getOwner().getId().equals(authenticatedUser.getId()))
+        if (!list.getOwner().getId().equals(authenticatedUser.getId()))
             throw new ForbiddenListOperationException();
         
     }
@@ -68,5 +66,10 @@ public class ListServiceImpl implements ListService {
     @Override
     public Collection<List> getUsersLists(User user) {
         return listRepository.findByOwner(user);
+    }
+
+    @Override
+    public void checkIfListExistsAndUserHasAccess(Long listId) {
+        checkIfUserHasAccessTo(getList(listId));
     }
 }

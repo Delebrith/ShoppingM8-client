@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class ProductControler {
-    private ProductService productService;
+    private final ProductService productService;
     
     @ApiOperation(value = "Get list products", nickname = "get list products", notes = "",
             authorizations = {@Authorization(value = "JWT")})

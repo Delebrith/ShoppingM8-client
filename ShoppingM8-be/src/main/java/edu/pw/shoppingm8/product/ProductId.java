@@ -2,15 +2,18 @@ package edu.pw.shoppingm8.product;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotNull;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
-import edu.pw.shoppingm8.list.List;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductId implements Serializable {
-    @NotNull
-    Long id;
-    @NotNull
-    List list;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long listId;
 }
