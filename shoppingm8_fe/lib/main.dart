@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.green,
-        backgroundColor: Colors.white
+        backgroundColor: Colors.white,
         cardColor: Colors.white,
         accentColor: Colors.lightGreenAccent,
         buttonTheme: ButtonThemeData(
