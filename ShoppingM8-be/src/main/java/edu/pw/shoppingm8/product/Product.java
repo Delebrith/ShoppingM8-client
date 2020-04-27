@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder.Default;
 
 @Data
 @NoArgsConstructor
@@ -44,7 +45,8 @@ public class Product {
     private ProductCategory category;
 
     @Column(nullable = false)
-    private Double purchasedAmount;
+    @Default
+    private Double purchasedAmount = 0.0;
 
     @Column(nullable = false)
     private Double requiredAmount;

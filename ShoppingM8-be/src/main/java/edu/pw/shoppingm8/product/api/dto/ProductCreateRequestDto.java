@@ -5,9 +5,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Value;
 
 @Value
-public class ProductRequestDto {
-    @NotNull
-    Long listId;
+public class ProductCreateRequestDto {
     @NotNull
     String name;
     @NotNull
