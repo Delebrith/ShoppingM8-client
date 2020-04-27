@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +22,10 @@ import java.util.Optional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
 
+
+@Validated
 @RestController
 @RequestMapping("auth")
 @RequiredArgsConstructor
@@ -35,8 +39,8 @@ public class AuthenticationController {
             @ApiResponse(code = 201, message = "If valid data were provided", response = TokenDto.class),
             @ApiResponse(code = 400, message = "If invalid data was provided")})
     @PostMapping(value = "register", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    ResponseEntity<TokenDto> register(@RequestPart(name = "data") UserRegistrationDto registrationDto,
-                                          @RequestPart(name = "picture", required = false) MultipartFile profilePicture) {
+    ResponseEntity<TokenDto> register(@RequestPart(name = "data") @Valid UserRegistrationDto registrationDto,
+                                      @RequestPart(name = "picture", required = false) MultipartFile profilePicture) {
         byte[] picture = Optional.ofNullable(profilePicture)
                 .map(multipartFile -> {
                     try {
@@ -61,7 +65,7 @@ public class AuthenticationController {
             @ApiResponse(code = 200, message = "If valid credentials were provided", response = RefreshTokenDto.class),
             @ApiResponse(code = 400, message = "If invalid data was provided")})
     @PostMapping("login")
-    ResponseEntity<TokenDto> authenticate(@RequestBody CredentialsDto credentialsDto) {
+    ResponseEntity<TokenDto> authenticate(@RequestBody @Valid CredentialsDto credentialsDto) {
         User authenticated = authenticationService.authenticate(credentialsDto.getEmail(), credentialsDto.getPassword());
         return ResponseEntity.ok(TokenDto.builder()
                 .accessToken(authenticationService.getAccessToken(authenticated))
@@ -74,7 +78,7 @@ public class AuthenticationController {
             @ApiResponse(code = 200, message = "If valid credentials were provided", response = RefreshTokenDto.class),
             @ApiResponse(code = 400, message = "If invalid data was provided")})
     @PostMapping("refresh")
-    ResponseEntity<TokenDto> refreshAuthentication(@RequestBody RefreshTokenDto refreshTokenDto) {
+    ResponseEntity<TokenDto> refreshAuthentication(@RequestBody @Valid RefreshTokenDto refreshTokenDto) {
         User authenticated = authenticationService.authenticateFromRefreshToken(refreshTokenDto.getRefreshToken());
         authenticationService.invalidateRefreshToken(refreshTokenDto.getRefreshToken());
         return ResponseEntity.ok(TokenDto.builder()
@@ -109,7 +113,7 @@ public class AuthenticationController {
         @ApiResponse(code = 200, message = "If valid data was provided", response = TokenDto.class),
         @ApiResponse(code = 400, message = "If invalid data was provided")})
     @PostMapping(value="login/facebook")
-    ResponseEntity<TokenDto> facebookLogin(@RequestBody SocialMediaLoginDto socialMediaLoginDto) {
+    ResponseEntity<TokenDto> facebookLogin(@RequestBody @Valid SocialMediaLoginDto socialMediaLoginDto) {
         User authenticated = authenticationService.authenticateWithFacebook(socialMediaLoginDto);
         return ResponseEntity.ok(TokenDto.builder()
                 .accessToken(authenticationService.getAccessToken(authenticated))
@@ -122,7 +126,7 @@ public class AuthenticationController {
         @ApiResponse(code = 200, message = "If valid data was provided", response = TokenDto.class),
         @ApiResponse(code = 400, message = "If invalid data was provided")})
     @PostMapping(value="login/google")
-    ResponseEntity<TokenDto> googleLogin(@RequestBody SocialMediaLoginDto socialMediaLoginDto) {
+    ResponseEntity<TokenDto> googleLogin(@RequestBody @Valid SocialMediaLoginDto socialMediaLoginDto) {
         User authenticated = authenticationService.authenticateWithGoogle(socialMediaLoginDto);
         return ResponseEntity.ok(TokenDto.builder()
                 .accessToken(authenticationService.getAccessToken(authenticated))

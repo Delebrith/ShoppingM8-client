@@ -1,6 +1,9 @@
 package edu.pw.shoppingm8.list;
 
 import edu.pw.shoppingm8.list.api.dto.ListModificationDto;
+import edu.pw.shoppingm8.user.User;
+
+import java.util.Collection;
 
 public interface ListService {
     List create(ListModificationDto listModificationDto);
@@ -14,4 +17,6 @@ public interface ListService {
     void checkIfUserHasAccessTo(List list);
 
     void checkIfUserIsOwner(List list);
+
+    Collection<List> getUsersLists(User user);
 }

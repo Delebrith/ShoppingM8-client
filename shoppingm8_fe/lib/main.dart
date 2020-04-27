@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.green,
-        backgroundColor: Color(0xFFDDFFEE),
+        backgroundColor: Colors.white,
         cardColor: Colors.white,
         accentColor: Colors.lightGreenAccent,
         buttonTheme: ButtonThemeData(
@@ -103,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         MaterialPageRoute(
             builder: (context) => LoginWidget(
                   serverUrl: serverUrl,
+                  dio: dio,
                 )));
   }
 
@@ -113,6 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           _startingWidget = MainMenuWidget(
             serverUrl: serverUrl,
+            dio: dio,
           );
           _serverResponding = true;
         });
