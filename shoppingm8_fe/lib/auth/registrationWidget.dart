@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -17,16 +18,18 @@ import 'dto/authenticationResponseDto.dart';
 
 class RegistrationWidget extends StatefulWidget {
   final String serverUrl;
+  final Dio dio;
 
-  const RegistrationWidget({Key key, this.serverUrl}) : super(key: key);
+  const RegistrationWidget({Key key, this.serverUrl, this.dio}) : super(key: key);
 
   @override
-  _RegistrationWidgetState createState() => _RegistrationWidgetState(serverUrl);
+  _RegistrationWidgetState createState() => _RegistrationWidgetState(serverUrl: serverUrl, dio: dio);
 }
 
 class _RegistrationWidgetState extends State<RegistrationWidget> {
   GlobalKey<FormState> _registrationForm = GlobalKey<FormState>();
-  String serverUrl;
+  final String serverUrl;
+  final Dio dio;
   AuthenticationApiProvider authenticationApiProvider;
 
   String _email;
@@ -35,8 +38,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   File _image;
   var _autovalidate = false;
 
-  _RegistrationWidgetState(String serverUrl) {
-    this.serverUrl = serverUrl;
+  _RegistrationWidgetState({this.serverUrl, this.dio}) {
     authenticationApiProvider = AuthenticationApiProvider(serverUrl);
   }
 
@@ -65,6 +67,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
             child: Center(

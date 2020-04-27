@@ -1,28 +1,32 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shoppingm8_fe/auth/loginWidget.dart';
+import 'package:shoppingm8_fe/list/myListsWidget.dart';
 
 import 'menuButtonWidget.dart';
 
 class MainMenuWidget extends StatelessWidget {
   final String serverUrl;
-  final Function moveToListScreen = () => print("lists");
+  final Dio dio;
   final Function moveToFriendList = () => print("friend");
   final Function moveToAccountManagement = () => print("account");
 
-  MainMenuWidget({this.serverUrl});
+  MainMenuWidget({this.serverUrl, this.dio});
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    var screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 250, 255, 250),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Container(
-              height: 200,
+              height: screenHeight/3,
               decoration: BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage("assets/background.jpg"),
@@ -31,12 +35,13 @@ class MainMenuWidget extends StatelessWidget {
                     fit: BoxFit.cover),
               ),
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 50, horizontal: 10),
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                alignment: Alignment.center,
                 child: Title(
                     color: Colors.black,
                     child: Text(
                       "Welcome to ShoppingM8!",
-                      style: TextStyle(fontSize: 42),
+                      style: TextStyle(fontSize: screenHeight/16),
                       textAlign: TextAlign.center,
                     )),
               )),
@@ -50,8 +55,8 @@ class MainMenuWidget extends StatelessWidget {
                   children: <Widget>[
                     MenuButton(
                       title: "My lists",
-                      onPressed: moveToListScreen,
-                      color: Colors.greenAccent,
+                      onPressed: () => _moveToListScreen(context),
+                      color: Colors.green,
                       icon: Icons.format_list_bulleted,
                     ),
                     MenuButton(
@@ -96,6 +101,12 @@ class MainMenuWidget extends StatelessWidget {
     await storage.delete(key: "JWT_refresh_token");
     Navigator.push(context, MaterialPageRoute(
         builder: (context) => LoginWidget(serverUrl: serverUrl)
+    ));
+  }
+
+  _moveToListScreen(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => MyListsWidget(dio: dio, serverUrl: serverUrl)
     ));
   }
 }

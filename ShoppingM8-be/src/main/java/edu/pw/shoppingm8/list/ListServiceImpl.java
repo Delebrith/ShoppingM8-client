@@ -11,6 +11,8 @@ import edu.pw.shoppingm8.user.User;
 import edu.pw.shoppingm8.user.UserService;
 import lombok.AllArgsConstructor;
 
+import java.util.Collection;
+
 @AllArgsConstructor
 @Service
 public class ListServiceImpl implements ListService {
@@ -61,5 +63,10 @@ public class ListServiceImpl implements ListService {
         if (list.getOwner().getId().equals(authenticatedUser.getId()))
             throw new ForbiddenListOperationException();
         
+    }
+
+    @Override
+    public Collection<List> getUsersLists(User user) {
+        return listRepository.findByOwner(user);
     }
 }

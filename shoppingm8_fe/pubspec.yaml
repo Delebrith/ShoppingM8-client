@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -32,6 +32,10 @@ dependencies:
   google_sign_in: ^4.4.1
   flutter_facebook_login: ^3.0.0
   flutter_cache_manager: ^1.2.0
+  flutter_slidable: ^0.5.4
+  fluttericon: ^1.0.3
+  dropdown_formfield: ^0.1.2
+  dotted_border: ^1.0.5
 
 dev_dependencies:
   flutter_test:

@@ -9,12 +9,14 @@ import lombok.Value;
 public class AuthenticatedUserDto {
     private static final String USER_PICTURE_URL_TEMPLATE = "/user/{id}/picture";
 
+    Long id;
     String name;
     String email;
     String profilePicture;
 
     public static AuthenticatedUserDto of(User user) {
         return AuthenticatedUserDto.builder()
+                .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .profilePicture(buildProfilePictureUrl(user.getId()))
