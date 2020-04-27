@@ -32,10 +32,13 @@ android/.project
 .pub-cache/
 .pub/
 /build/
-pubspec.lock
+**/pubspec.lock
 
 # Web related
 lib/generated_plugin_registrant.dart
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+# Security
+**/android/key.properties
