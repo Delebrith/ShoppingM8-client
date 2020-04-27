@@ -51,7 +51,7 @@ class ListTileWidget extends StatelessWidget {
                       ),
                     ),
                     RoundButtonWidget(
-                      color: Colors.lightBlueAccent,
+                      color: Colors.greenAccent,
                       icon: Icons.forward,
                       onPressed: () => goToProductsListWidget(context),
                       radius: 25,

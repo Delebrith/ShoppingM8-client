@@ -67,10 +67,18 @@ class ListCreationDialog extends StatelessWidget {
     Response response = await apiProvider.createList(dto);
     if (response.statusCode == 201) {
       Navigator.pop(context);
+      final scaffold = Scaffold.of(context);
+      scaffold.showSnackBar(
+        SnackBar(
+          content: const Text('List created'),
+          action: SnackBarAction(
+              label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar),
+        ),
+      );
       onSuccess();
     } else {
       Navigator.pop(context);
-      ErrorDto error = json.decode(response.data.toString());
+      ErrorDto error = ErrorDto.fromJson(response.data);
       showDialog(
           context: context,
           builder: (context) => AlertDialog(

@@ -5,28 +5,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
+import 'package:shoppingm8_fe/list/product/dto/productResponseDto.dart';
 import 'package:shoppingm8_fe/list/product/productCategory.dart';
 import 'package:dropdown_formfield/dropdown_formfield.dart';
 
 import 'dto/productRequestDto.dart';
 import 'productApiProvider.dart';
 
-class ProductCreationDialog extends StatefulWidget {
+class ProductEditionDialog extends StatefulWidget {
   final String title;
   final ProductApiProvider apiProvider;
   final Function onSuccess;
+  final ProductResponseDto productDto;
 
-  ProductCreationDialog({Key key, this.title, this.apiProvider, this.onSuccess}) : super(key: key);
+  ProductEditionDialog({Key key, this.title, this.apiProvider, this.onSuccess, this.productDto}) : super(key: key);
 
   @override
-  _ProductCreationWidgetState createState() => _ProductCreationWidgetState(title: this.title, apiProvider: this.apiProvider, onSuccess: this.onSuccess);
+  _ProductEditionWidgetState createState() => _ProductEditionWidgetState(title: this.title, apiProvider: this.apiProvider, onSuccess: this.onSuccess, productDto: this.productDto);
 
 }
 
-class _ProductCreationWidgetState extends State {
+class _ProductEditionWidgetState extends State {
   final GlobalKey<FormState> _productForm = GlobalKey<FormState>();
   final String title;
   final ProductApiProvider apiProvider;
+  final ProductResponseDto productDto;
   final Function onSuccess;
 
   String _name;
@@ -34,7 +37,12 @@ class _ProductCreationWidgetState extends State {
   String _unit;
   ProductCategory _category;
 
-  _ProductCreationWidgetState({this.title, this.apiProvider, this.onSuccess});
+  _ProductEditionWidgetState({this.productDto, this.title, this.apiProvider, this.onSuccess}) {
+    _name = productDto.name;
+    _requiredAmount = productDto.requiredAmount;
+    _unit = productDto.unit;
+    _category = productDto.category;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +65,7 @@ class _ProductCreationWidgetState extends State {
                       autofocus: true,
                       autocorrect: false,
                       decoration: InputDecoration(labelText: "Product name"),
+                      initialValue: _name,
                       onSaved: (value) => _name = value,
                     ),
                   ),
@@ -64,6 +73,7 @@ class _ProductCreationWidgetState extends State {
                     padding: EdgeInsets.all(8.0),
                     child: TextFormField(
                       autocorrect: false,
+                      initialValue: _requiredAmount.toString(),
                       keyboardType: TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: <TextInputFormatter>[
                         WhitelistingTextInputFormatter.digitsOnly
@@ -76,6 +86,7 @@ class _ProductCreationWidgetState extends State {
                     padding: EdgeInsets.all(8.0),
                     child: TextFormField(
                       autocorrect: false,
+                      initialValue: _unit,
                       decoration: InputDecoration(labelText: "Unit (kg, g, pc...)"),
                       onSaved: (value) => _unit = value,
                     ),
@@ -125,7 +136,7 @@ class _ProductCreationWidgetState extends State {
       final scaffold = Scaffold.of(context);
       scaffold.showSnackBar(
         SnackBar(
-          content: const Text('Product created'),
+          content: const Text('Product changes saved'),
           action: SnackBarAction(
               label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar),
         ),
@@ -137,7 +148,7 @@ class _ProductCreationWidgetState extends State {
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text("Could not add new product"),
+            title: Text("Could not edit product"),
             content: Text(error.message),
             actions: <Widget>[
               FlatButton(

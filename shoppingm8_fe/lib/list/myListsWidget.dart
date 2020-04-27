@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
+import 'package:shoppingm8_fe/list/invitationsTileWidget.dart';
 import 'package:shoppingm8_fe/list/listApiProvider.dart';
 import 'package:shoppingm8_fe/list/listCreationDialog.dart';
 import 'package:shoppingm8_fe/list/product/productsListWidget.dart';
@@ -27,12 +28,10 @@ class _MyListsWidgetState extends State<StatefulWidget> {
 
   ListApiProvider _apiProvider;
   List<Widget> lists = [
-    Container(
-      width: double.infinity,
-      height: double.infinity,
-      alignment: Alignment.center,
-      child: Text("No lists found."),
-    )];
+    InvitationsTileWidget(
+      goToInvitationsFunction: () => print("go to invitations"),
+    )
+  ];
 
   _MyListsWidgetState({this.dio, this.serverUrl}) {
     _apiProvider = ListApiProvider(dio: dio, serverUrl: serverUrl);
@@ -57,18 +56,12 @@ class _MyListsWidgetState extends State<StatefulWidget> {
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             height: double.infinity,
             alignment: Alignment.bottomRight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                RoundButtonWidget(
-                    onPressed: () {
-                      print("Invitations");
-                    },
-                    color: Colors.greenAccent,
-                    icon: Icons.group_add),
                 RoundButtonWidget(
                     onPressed: () {
                       showDialog(
@@ -95,7 +88,8 @@ class _MyListsWidgetState extends State<StatefulWidget> {
         print(responseBody);
         List<ListResponseDto> dtos = responseBody.map((dto) => ListResponseDto.fromJson(dto)).toList();
         if (dtos.isNotEmpty)
-          lists = dtos.map((dto) => ListTileWidget(listDto: dto, goToProductsListWidget: _goToProductsWidget(dto),)).toList();
+          lists = dtos.map((dto) => ListTileWidget(listDto: dto, goToProductsListWidget: _goToProductsWidget(dto),)).cast<Widget>().toList();
+          lists.add(InvitationsTileWidget(goToInvitationsFunction: () => print("go to invitations"),));
       });
     }
   }

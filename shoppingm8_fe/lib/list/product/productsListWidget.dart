@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
 import 'package:shoppingm8_fe/list/product/dto/productResponseDto.dart';
+import 'package:shoppingm8_fe/list/product/productCategory.dart';
 import 'package:shoppingm8_fe/list/product/productWidget.dart';
 
 import 'productApiProvider.dart';
@@ -90,9 +91,16 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
       setState(() {
         List responseBody = response.data;
         print(responseBody);
-        List<ProductResponseDto> dtos = responseBody.map((dto) => ProductResponseDto.fromJson(dto)).toList();
+        List<ProductResponseDto> dtos = responseBody.map((dto) =>
+            ProductResponseDto.fromJson(dto)).toList();
         if (dtos.isNotEmpty) {
-          List<Widget> products = dtos.map((dto) => ProductWidget(productDto: dto, apiProvider: _apiProvider)).toList();
+          List<Widget> products = dtos.map((dto) =>
+              Card(
+                  margin: EdgeInsets.symmetric(vertical: 5),
+                  child: ProductWidget(productDto: dto,
+                    apiProvider: _apiProvider,
+                    getProductsFunction: _getProducts,)
+              )).toList();
           productList = ListView(
             scrollDirection: Axis.vertical,
             children: products,

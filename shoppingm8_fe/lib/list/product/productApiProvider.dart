@@ -8,7 +8,7 @@ class ProductApiProvider extends ApiProvider {
   final num id;
 
   ProductApiProvider({this.id, String serverUrl, Dio dio}) : super(serverUrl: serverUrl, dio: dio) {
-    this.uri = Uri.parse("/list/$id/product/");
+    this.uri = Uri.parse(serverUrl + "/list/$id/product/");
   }
 
   Future<Response> getListsProducts() {

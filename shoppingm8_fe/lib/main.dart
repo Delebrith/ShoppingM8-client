@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.green,
-        backgroundColor: Color.fromARGB(255, 220, 255, 220),
+        backgroundColor: Color.fromARGB(255, 225, 255, 225),
         cardColor: Colors.white,
         accentColor: Colors.lightGreenAccent,
         buttonTheme: ButtonThemeData(
@@ -39,7 +39,6 @@ class MyApp extends StatelessWidget {
           textTheme: ButtonTextTheme.normal,
           padding: EdgeInsets.all(5),
         ),
-        scaffoldBackgroundColor: Color.fromARGB(250, 242, 255, 242),
       ),
       home: MyHomePage(),
     );
