@@ -60,4 +60,8 @@ class AuthenticationApiProvider extends ApiProvider {
     return sendPostRequest(endpoint: "$_loginEndpoint/$media", body: socialMediaLoginDto);
   }
 
+  Future<Response> deleteAccount(Dio dio) async {
+    return dio.deleteUri(uri.resolve(_meEndpoint));
+  }
+
 }

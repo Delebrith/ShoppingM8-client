@@ -32,3 +32,4 @@ databaseChangeLog:
             constraintName: refresh_token_FK1
             referencedTableName: User_
             referencedColumnNames: id
+            onDelete: CASCADE
