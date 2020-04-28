@@ -21,6 +21,7 @@ class _AccountManagementWidgetState extends State<StatefulWidget> {
   final String serverUrl;
 
   UserDto _userDto;
+  ImageProvider _image = AssetImage('assets/user.jpg');
 
   AuthenticationApiProvider _apiProvider;
   _AccountManagementWidgetState({this.dio, this.serverUrl}) {
@@ -34,66 +35,76 @@ class _AccountManagementWidgetState extends State<StatefulWidget> {
       setState(() {
         _userDto = UserDto.fromJson(response.data);
       });
+      if (_userDto.profilePicture != null) {
+        String token = await FlutterSecureStorage().read(key: '');
+        setState(() {
+          _image = NetworkImage(serverUrl + _userDto.profilePicture,
+            headers: {"Authorization": "Bearer " + token});
+        });
+      }
     }
-  }
-
-  ImageProvider _displayUserImage(String imageUrl) {
-    if (imageUrl != null)
-      return NetworkImage(imageUrl);
-    else
-      return AssetImage('assets/user.jpg');
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromARGB(255, 250, 255, 250),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(30),
-          child: Column(
-            
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Title(
-                color: Colors.black,
-                child: Text(
-                    "Your account:",
-                    style: TextStyle(fontSize: 24),
-                    textAlign: TextAlign.center,
-                )
-              ),
-              Container(
-                margin: EdgeInsets.all(10),
-                child: CircleAvatar(
-                    backgroundImage: AssetImage("assets/user.jpg"),
-                    backgroundColor: Colors.transparent,
-                    child: Image(
-                      image: _displayUserImage(_userDto?.profilePicture),
-                    )
-                )
-              ),
-              Container(
-                margin: EdgeInsets.all(5),
-                child: Text(
-                  "Username: ${_userDto?.name}"
+    return Stack(
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage("assets/background.jpg"),
+                    fit: BoxFit.cover
                 ),
               ),
-              Container(
-                margin: EdgeInsets.all(5),
-                child: FlatButton(
-                  child: Text("Delete account"),
-                  color: Colors.red,
-                  onPressed: _onDeleteAccount
+            ),
+            Center(
+              child: Card(
+                child: FractionallySizedBox(
+                  heightFactor: 0.8,
+                  widthFactor: 0.8,
+                  child: Column(
+                
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Title(
+                        color: Colors.black,
+                        child: Text(
+                            "Your account:",
+                            style: TextStyle(fontSize: 24),
+                            textAlign: TextAlign.center,
+                        )
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        child: Image(
+                            image: _image,
+                            width: 100,
+                            height: 100,
+                        )
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(5),
+                        child: Text(
+                          "Displayed name: ${_userDto?.name}"
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(5),
+                        child: FlatButton(
+                          child: Text("Delete account"),
+                          color: Colors.red,
+                          onPressed: _onDeleteAccount
+                        )
+                      ),
+                    ]
+                  )
                 )
-              ),
-            ]
-          )
-        )
-      )
-    );
+              )
+            )
+          ]
+        );
   }
 
   void _confirmAccountDelete(BuildContext context, Function confirmationCallback) {
