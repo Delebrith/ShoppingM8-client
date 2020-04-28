@@ -19,4 +19,6 @@ public interface ListService {
     void checkIfUserIsOwner(List list);
 
     Collection<List> getUsersLists(User user);
+
+    void checkIfListExistsAndUserHasAccess(Long id);
 }
