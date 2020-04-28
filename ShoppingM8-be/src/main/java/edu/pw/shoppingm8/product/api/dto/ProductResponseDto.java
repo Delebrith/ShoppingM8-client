@@ -1,7 +1,5 @@
 package edu.pw.shoppingm8.product.api.dto;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 
 import edu.pw.shoppingm8.product.Product;
@@ -19,7 +17,6 @@ public class ProductResponseDto {
     @NotNull
     String unit;
     @NotNull
-    @Enumerated(EnumType.STRING)
     ProductCategory category;
     @NotNull
     Double requiredAmount;
