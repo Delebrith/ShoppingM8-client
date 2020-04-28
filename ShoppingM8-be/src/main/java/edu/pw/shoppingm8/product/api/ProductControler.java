@@ -83,7 +83,7 @@ public class ProductControler {
     @PatchMapping("{id}")
     public ResponseEntity<Void> patchProduct(
         @PathVariable Long listId, @PathVariable Long id, @Valid @RequestBody ProductPatchRequestDto productDto) {
-        productService.patchProduct(listId, id, productDto);
+        productService.updateProduct(listId, id, productDto);
         return ResponseEntity.ok().build();
     }
     
@@ -102,12 +102,12 @@ public class ProductControler {
     @ApiOperation(value = "Delete product", nickname = "delete product", notes = "",
             authorizations = {@Authorization(value = "JWT")})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "If valid id was provided"),
+        @ApiResponse(code = 204, message = "If valid id was provided"),
         @ApiResponse(code = 403, message = "If user does not have access to the list"),
         @ApiResponse(code = 404, message = "If invalid id was provided")})
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long listId, @PathVariable Long id) {
         productService.deleteProduct(listId, id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

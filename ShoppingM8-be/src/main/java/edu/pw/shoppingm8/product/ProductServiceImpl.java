@@ -47,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
             .name(productDto.getName())
             .unit(productDto.getUnit())
             .requiredAmount(productDto.getRequiredAmount())
-            .category(ProductCategory.fromString(productDto.getCategory()))
+            .category(productDto.getCategory())
             .build();
         productRepository.save(product);
 
@@ -56,14 +56,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public void patchProduct(Long listId, Long productId, ProductPatchRequestDto productDto) {
+    public void updateProduct(Long listId, Long productId, ProductPatchRequestDto productDto) {
         Product product = getProduct(listId, productId);
         if (productDto.getName() != null)
             product.setName(productDto.getName());
         if (productDto.getRequiredAmount() != null)
             product.setRequiredAmount(productDto.getRequiredAmount());
         if (productDto.getCategory() != null)
-            product.setCategory(ProductCategory.fromString(productDto.getCategory()));
+            product.setCategory(productDto.getCategory());
         if (productDto.getUnit() != null)
             product.setUnit(productDto.getUnit());
 

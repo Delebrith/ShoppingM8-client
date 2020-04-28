@@ -1,7 +1,10 @@
 package edu.pw.shoppingm8.product.api.dto;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 
+import edu.pw.shoppingm8.product.ProductCategory;
 import lombok.Value;
 
 @Value
@@ -11,7 +14,8 @@ public class ProductCreateRequestDto {
     @NotNull
     String unit;
     @NotNull
-    String category;
+    @Enumerated(EnumType.STRING)
+    ProductCategory category;
     @NotNull
     Double requiredAmount;
 
