@@ -37,7 +37,7 @@ class ProductWidget extends StatelessWidget {
                   CircleAvatar(
                       backgroundColor: ProductCategoryHepler.getColor(productDto.category),
                       radius: 30,
-                      child: Icon(ProductCategoryHepler.getIcon(productDto.category), size: 30,)
+                      child: Icon(ProductCategoryHepler.getIcon(productDto.category), size: 30, color: Colors.white,)
                   ),
                 ),
                 Expanded(
