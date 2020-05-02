@@ -1,18 +1,19 @@
 package edu.pw.shoppingm8.list;
 
-import org.springframework.stereotype.Service;
-
 import edu.pw.shoppingm8.authentication.AuthenticationService;
 import edu.pw.shoppingm8.list.api.dto.ListModificationDto;
 import edu.pw.shoppingm8.list.exception.ForbiddenListOperationException;
 import edu.pw.shoppingm8.list.exception.ListNotFoundException;
-import edu.pw.shoppingm8.user.User;
+import edu.pw.shoppingm8.user.db.User;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
 @AllArgsConstructor
 @Service
+@Transactional
 public class ListServiceImpl implements ListService {
     private final ListRepository listRepository;
     private final AuthenticationService authenticationService;
@@ -50,8 +51,7 @@ public class ListServiceImpl implements ListService {
 	@Override
 	public void checkIfUserHasAccessTo(List list) {
         User authenticatedUser = authenticationService.getAuthenticatedUser();
-        if (!list.getOwner().getId().equals(authenticatedUser.getId())) 
-            // TODO replace with check if user is a member
+        if (!list.getOwner().equals(authenticatedUser) && !list.getMembers().contains(authenticatedUser))
             throw new ForbiddenListOperationException();
     }
     
@@ -65,11 +65,23 @@ public class ListServiceImpl implements ListService {
 
     @Override
     public Collection<List> getUsersLists(User user) {
-        return listRepository.findByOwner(user);
+        return listRepository.findUsersLists(user);
     }
 
     @Override
     public void checkIfListExistsAndUserHasAccess(Long listId) {
         checkIfUserHasAccessTo(getList(listId));
+    }
+
+    @Override
+    public void addMemberToList(List list, User user) {
+        list.getMembers().add(user);
+        listRepository.save(list);
+    }
+
+    @Override
+    public void leaveList(List list) {
+        list.getMembers().remove(authenticationService.getAuthenticatedUser());
+        listRepository.save(list);
     }
 }

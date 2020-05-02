@@ -2,9 +2,15 @@ package edu.pw.shoppingm8.user;
 
 import edu.pw.shoppingm8.authentication.api.dto.UserRegistrationDto;
 import edu.pw.shoppingm8.authentication.social.SocialMediaProfileDto;
+import edu.pw.shoppingm8.user.api.dto.UserSearchDto;
+import edu.pw.shoppingm8.user.db.User;
+import edu.pw.shoppingm8.user.db.UserRepository;
+import edu.pw.shoppingm8.user.db.UserSpecification;
 import edu.pw.shoppingm8.user.exception.EmailAlreadyUsedException;
 import edu.pw.shoppingm8.user.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -64,6 +70,12 @@ class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void deregister(User user) {
         userRepository.delete(user);
+    }
+
+    @Override
+    public Page<User> getUsers(UserSearchDto searchDto) {
+        return userRepository
+                .findAll(new UserSpecification(searchDto), PageRequest.of(searchDto.getPageNo(), searchDto.getPageSize()));
     }
 
     @Override

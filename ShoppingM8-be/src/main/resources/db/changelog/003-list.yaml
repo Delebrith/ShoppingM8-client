@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: 3
       author: jlyskawa
       changes:
         - createTable:
@@ -23,6 +23,7 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: false
+
         - addForeignKeyConstraint:
             baseTableName: List
             baseColumnNames:
@@ -31,3 +32,95 @@ databaseChangeLog:
             referencedTableName: User_
             referencedColumnNames: id
             onDelete: CASCADE
+
+        - createTable:
+            tableName: list_members
+            columns:
+              - column:
+                  name: list_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: list_members
+            baseColumnNames:
+              - list_id
+            constraintName: list_members_FK1
+            referencedTableName: List
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: list_members
+            baseColumnNames:
+              - user_id
+            constraintName: list_members_FK2
+            referencedTableName: User_
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addUniqueConstraint:
+            tableName: list_members
+            columnNames: list_id, user_id
+            constraintName: list_members_uc1
+
+        - createTable:
+            tableName: list_invitation
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: list_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: invited_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: inviting_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: list_invitation
+            baseColumnNames:
+              - list_id
+            constraintName: list_invitation_FK1
+            referencedTableName: List
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: list_invitation
+            baseColumnNames:
+              - invited_id
+            constraintName: list_invitation_FK2
+            referencedTableName: User_
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: list_invitation
+            baseColumnNames:
+              - inviting_id
+            constraintName: list_invitation_FK3
+            referencedTableName: User_
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - addUniqueConstraint:
+            tableName: list_invitation
+            columnNames: list_id, invited_id, inviting_id
+            constraintName: list_invitation_uc1
+

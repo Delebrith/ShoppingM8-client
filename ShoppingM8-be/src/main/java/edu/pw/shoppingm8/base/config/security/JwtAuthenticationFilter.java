@@ -1,6 +1,6 @@
 package edu.pw.shoppingm8.base.config.security;
 
-import edu.pw.shoppingm8.user.User;
+import edu.pw.shoppingm8.user.db.User;
 import io.jsonwebtoken.Jwts;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 

@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import edu.pw.shoppingm8.user.User;
+import edu.pw.shoppingm8.user.db.User;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -25,4 +28,11 @@ public class List {
     @ManyToOne
     @JoinColumn(name = "OWNER_ID", nullable = false)
     private User owner;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(joinColumns = @JoinColumn(name = "LIST_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"),
+            name = "LIST_MEMBERS")
+    @Builder.Default
+    private Set<User> members = new HashSet<>();
 }

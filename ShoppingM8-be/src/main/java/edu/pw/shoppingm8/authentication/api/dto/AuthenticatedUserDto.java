@@ -1,6 +1,6 @@
 package edu.pw.shoppingm8.authentication.api.dto;
 
-import edu.pw.shoppingm8.user.User;
+import edu.pw.shoppingm8.user.db.User;
 import lombok.Builder;
 import lombok.Value;
 
