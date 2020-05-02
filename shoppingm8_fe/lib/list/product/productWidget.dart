@@ -24,7 +24,6 @@ class ProductWidget extends StatelessWidget {
       actionExtentRatio: 0.25,
       child: Container(
         width: double.infinity,
-//        height: 100,
         color: Colors.white,
         child: Padding(
             padding: EdgeInsets.all(20),

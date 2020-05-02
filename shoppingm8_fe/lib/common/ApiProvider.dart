@@ -3,12 +3,11 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 
-abstract class ApiProvider {
-  final Dio dio;
-  final String serverUrl;
-  Uri uri;
+import '../main.dart';
 
-  ApiProvider({this.dio, this.serverUrl});
+abstract class ApiProvider {
+  Dio dio = defaultDio;
+  Uri uri;
 
   Future<Response> sendPostRequest({String endpoint, Object body}) {
     return dio.postUri(uri.resolve(endpoint),

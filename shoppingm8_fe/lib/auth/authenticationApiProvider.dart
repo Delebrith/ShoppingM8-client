@@ -9,6 +9,7 @@ import 'package:shoppingm8_fe/auth/dto/registrationDto.dart';
 import 'package:shoppingm8_fe/auth/dto/socialMediaLoginDto.dart';
 import 'package:shoppingm8_fe/common/ApiProvider.dart';
 
+import '../main.dart';
 import 'dto/refreshTokenDto.dart';
 
 class AuthenticationApiProvider extends ApiProvider {
@@ -18,7 +19,8 @@ class AuthenticationApiProvider extends ApiProvider {
   static final String _registerEndpoint = "register";
   static final String _meEndpoint = "me";
 
-  AuthenticationApiProvider(String serverUrl) : super(serverUrl: serverUrl, dio: Dio()) {
+  AuthenticationApiProvider() {
+    dio = new Dio();
     dio.options.connectTimeout = 2000;
     this.uri = Uri.parse(serverUrl + "/" + _authenticationEndpoint + "/");
   }
@@ -49,8 +51,8 @@ class AuthenticationApiProvider extends ApiProvider {
     return sendPostRequest(endpoint: _refreshEndpoint, body: refreshTokenDto);
   }
 
-  Future<Response> me(Dio interceptedDio) async {
-    return interceptedDio.getUri(uri.resolve(_meEndpoint),
+  Future<Response> me() async {
+    return defaultDio.getUri(uri.resolve(_meEndpoint),
         options: Options(
           contentType: ContentType.json.value,
         ));

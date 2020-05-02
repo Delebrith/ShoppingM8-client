@@ -13,8 +13,8 @@ class AuthenticationInterceptor extends dio_package.Interceptor {
   AuthenticationApiProvider authenticationApiProvider;
   FlutterSecureStorage secureStorage;
 
-  AuthenticationInterceptor({this.onAuthenticationError, String serverUrl}) {
-    this.authenticationApiProvider = AuthenticationApiProvider(serverUrl);
+  AuthenticationInterceptor({this.onAuthenticationError}) {
+    this.authenticationApiProvider = AuthenticationApiProvider();
     this.secureStorage = FlutterSecureStorage();
   }
 

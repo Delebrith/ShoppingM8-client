@@ -2,12 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:shoppingm8_fe/common/ApiProvider.dart';
 import 'package:shoppingm8_fe/list/dto/listRequestDto.dart';
 
+import '../main.dart';
+
 class ListApiProvider extends ApiProvider {
   static final String listPrefix = "/list/";
 
   Uri uri;
 
-  ListApiProvider({String serverUrl, Dio dio}) : super(serverUrl: serverUrl, dio: dio) {
+  ListApiProvider() : super() {
     uri = Uri.parse(serverUrl + listPrefix);
   }
 

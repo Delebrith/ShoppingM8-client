@@ -8,6 +8,7 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,8 @@ public class UserController {
     @GetMapping("/{id}/picture")
     ResponseEntity<InputStreamResource> getProfilePicture(@PathVariable Long id) {
         User user = userService.getUser(id);
-        return ResponseEntity.ok(new InputStreamResource(new ByteArrayInputStream(user.getProfilePicture())));
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(new InputStreamResource(new ByteArrayInputStream(user.getProfilePicture())));
     }
 }

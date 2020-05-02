@@ -50,7 +50,7 @@ public class AuthenticationController {
                         return null;
                     }
                 })
-                .orElse(new byte[0]);
+                .orElse(null);
         User registered = userService
                 .register(registrationDto, picture);
         return ResponseEntity.created(URI.create("/user/" + registered.getId()))

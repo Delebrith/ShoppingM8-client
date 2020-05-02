@@ -12,29 +12,20 @@ import 'dto/listResponseDto.dart';
 import 'listCreationDialog.dart';
 
 class MyListsWidget extends StatefulWidget {
-  final Dio dio;
-  final String serverUrl;
-
-  const MyListsWidget({Key key, this.dio, this.serverUrl}) : super(key: key);
-
   @override
-  _MyListsWidgetState createState() => _MyListsWidgetState(dio: dio, serverUrl: serverUrl);
+  _MyListsWidgetState createState() => _MyListsWidgetState();
 
 }
 
 class _MyListsWidgetState extends State<StatefulWidget> {
-  final Dio dio;
-  final String serverUrl;
-
-  ListApiProvider _apiProvider;
+  ListApiProvider _apiProvider = ListApiProvider();
   List<Widget> lists = [
     InvitationsTileWidget(
       goToInvitationsFunction: () => print("go to invitations"),
     )
   ];
 
-  _MyListsWidgetState({this.dio, this.serverUrl}) {
-    _apiProvider = ListApiProvider(dio: dio, serverUrl: serverUrl);
+  _MyListsWidgetState() {
     _getLists();
   }
 
@@ -96,6 +87,6 @@ class _MyListsWidgetState extends State<StatefulWidget> {
 
   Function _goToProductsWidget(ListResponseDto dto) {
     return (context) => Navigator.push(context, MaterialPageRoute(
-        builder: (context) => ProductsListWidget(serverUrl: serverUrl, dio: dio, id: dto.id, name: dto.name,)));
+        builder: (context) => ProductsListWidget(id: dto.id, name: dto.name,)));
   }
 }

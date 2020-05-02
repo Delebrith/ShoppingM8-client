@@ -8,12 +8,8 @@ import 'package:shoppingm8_fe/list/myListsWidget.dart';
 import 'menuButtonWidget.dart';
 
 class MainMenuWidget extends StatelessWidget {
-  final String serverUrl;
-  final Dio dio;
   final Function moveToFriendList = () => print("friend");
   final Function moveToAccountManagement = () => print("account");
-
-  MainMenuWidget({this.serverUrl, this.dio});
 
   @override
   Widget build(BuildContext context) {
@@ -100,13 +96,13 @@ class MainMenuWidget extends StatelessWidget {
     await storage.delete(key: "JWT_access_token");
     await storage.delete(key: "JWT_refresh_token");
     Navigator.push(context, MaterialPageRoute(
-        builder: (context) => LoginWidget(serverUrl: serverUrl)
+        builder: (context) => LoginWidget()
     ));
   }
 
   _moveToListScreen(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
-        builder: (context) => MyListsWidget(dio: dio, serverUrl: serverUrl)
+        builder: (context) => MyListsWidget()
     ));
   }
 }

@@ -10,21 +10,17 @@ import 'productApiProvider.dart';
 import 'productCreationDialog.dart';
 
 class ProductsListWidget extends StatefulWidget {
-  final Dio dio;
-  final String serverUrl;
   final num id;
   final String name;
 
-  const ProductsListWidget({Key key, this.dio, this.serverUrl, this.id, this.name}) : super(key: key);
+  const ProductsListWidget({Key key, this.id, this.name}) : super(key: key);
 
   @override
-  _ProductsListWidgetState createState() => _ProductsListWidgetState(dio: dio, serverUrl: serverUrl, id: id, name: name);
+  _ProductsListWidgetState createState() => _ProductsListWidgetState(id: id, name: name);
 
 }
 
 class _ProductsListWidgetState extends State<StatefulWidget> {
-  final Dio dio;
-  final String serverUrl;
   final num id;
   final String name;
 
@@ -36,8 +32,8 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
       child: Text("No products found."),
     );
 
-  _ProductsListWidgetState({this.name, this.id, this.dio, this.serverUrl}) {
-    _apiProvider = ProductApiProvider(dio: dio, serverUrl: serverUrl, id: id);
+  _ProductsListWidgetState({this.name, this.id}) {
+    _apiProvider = ProductApiProvider(id: id);
     _getProducts();
   }
 
