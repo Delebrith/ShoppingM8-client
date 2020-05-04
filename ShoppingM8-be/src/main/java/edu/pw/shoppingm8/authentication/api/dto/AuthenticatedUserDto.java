@@ -7,7 +7,7 @@ import lombok.Value;
 @Value
 @Builder
 public class AuthenticatedUserDto {
-    private static final String USER_PICTURE_URL_TEMPLATE = "/user/{id}/picture";
+    private static final String USER_PICTURE_URL_TEMPLATE = "/user/%d/picture";
 
     Long id;
     String name;

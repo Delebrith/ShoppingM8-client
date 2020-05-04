@@ -7,6 +7,8 @@ import edu.pw.shoppingm8.list.invitation.db.ListInvitation;
 import edu.pw.shoppingm8.list.invitation.db.ListInvitationRepository;
 import edu.pw.shoppingm8.list.invitation.exception.ForbiddenListInvitationOperationException;
 import edu.pw.shoppingm8.list.invitation.exception.ListInvitationNotFoundException;
+import edu.pw.shoppingm8.list.invitation.exception.UserIsAlreadyAMemberException;
+import edu.pw.shoppingm8.list.invitation.exception.UserIsAlreadyInvitedException;
 import edu.pw.shoppingm8.user.db.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,12 @@ public class ListInvitationServiceImpl implements ListInvitationService {
 
     @Override
     public ListInvitation createInvitation(List list, User invited) {
+        if (list.getMembers().contains(invited) || list.getOwner().equals(invited)) {
+            throw new UserIsAlreadyAMemberException();
+        }
+        if (listInvitationRepository.existsByListAndInvited(list, invited)) {
+            throw new UserIsAlreadyInvitedException();
+        }
         ListInvitation invitation = ListInvitation.builder()
                 .invited(invited)
                 .inviting(authenticationService.getAuthenticatedUser())

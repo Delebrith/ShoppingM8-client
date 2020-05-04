@@ -2,11 +2,9 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
+import 'package:shoppingm8_fe/list/invitation/listInvitationsWidget.dart';
 
 class InvitationsTileWidget extends StatelessWidget {
-  final Function goToInvitationsFunction;
-
-  InvitationsTileWidget({Key key, this.goToInvitationsFunction}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +47,7 @@ class InvitationsTileWidget extends StatelessWidget {
                         icon: Icons.group_add,
                         radius: 40,
                         color: Colors.lightBlueAccent,
-                        onPressed: goToInvitationsFunction,
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ListInvitationsWidget())),
                       ),
                     )
                   ],

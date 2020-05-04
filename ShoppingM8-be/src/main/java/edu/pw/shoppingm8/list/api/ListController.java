@@ -86,11 +86,10 @@ public class ListController {
         @ApiResponse(code = 404, message = "If list does not exist"),
     })
     @PatchMapping("{id}")
-    ResponseEntity<Void> updateList(@PathVariable Long id,
+    ResponseEntity<ListDto> updateList(@PathVariable Long id,
                                     @RequestBody @Valid ListModificationDto listModificationDto) {
         List list = listService.getList(id);
-        listService.update(list, listModificationDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ListDto.of(listService.update(list, listModificationDto)));
     }
     
     @ApiOperation(value = "Delete list", nickname = "delete list", notes = "",

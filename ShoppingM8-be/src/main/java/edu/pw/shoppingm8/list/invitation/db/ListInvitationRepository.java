@@ -12,4 +12,8 @@ public interface ListInvitationRepository extends JpaRepository<ListInvitation, 
     Collection<ListInvitation> findByInvited(User invited);
 
     Collection<ListInvitation> findByInviting(User inviting);
+
+    void deleteByList(List list);
+
+    boolean existsByListAndInvited(List list, User invited);
 }

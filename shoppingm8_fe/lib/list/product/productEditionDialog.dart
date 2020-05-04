@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
@@ -130,18 +129,10 @@ class _ProductEditionWidgetState extends State {
   Future<void> _submit(context) async {
     _productForm.currentState.save();
     ProductRequestDto dto = ProductRequestDto(name: _name, category: _category, requiredAmount: _requiredAmount, unit: _unit);
-    Response response = await apiProvider.createProduct(dto);
-    if (response.statusCode == 201) {
+    Response response = await apiProvider.updateProduct(productDto.id, dto);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      onSuccess(ProductResponseDto.fromJson(response.data));
       Navigator.pop(context);
-      final scaffold = Scaffold.of(context);
-      scaffold.showSnackBar(
-        SnackBar(
-          content: const Text('Product changes saved'),
-          action: SnackBarAction(
-              label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar),
-        ),
-      );
-      onSuccess();
     } else {
       Navigator.pop(context);
       ErrorDto error = ErrorDto.fromJson(response.data);

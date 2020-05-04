@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shoppingm8_fe/main.dart';
-import 'package:shoppingm8_fe/user/userDto.dart';
+import 'package:shoppingm8_fe/user/dto/userDto.dart';
 
 class UserLabelWidget extends StatefulWidget {
   final UserDto userDto;

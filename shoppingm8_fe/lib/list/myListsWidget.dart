@@ -5,7 +5,7 @@ import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
 import 'package:shoppingm8_fe/list/invitationsTileWidget.dart';
 import 'package:shoppingm8_fe/list/listApiProvider.dart';
 import 'package:shoppingm8_fe/list/listCreationDialog.dart';
-import 'package:shoppingm8_fe/list/product/productsListWidget.dart';
+import 'package:shoppingm8_fe/list/productsListWidget.dart';
 
 import 'ListTileWidget.dart';
 import 'dto/listResponseDto.dart';
@@ -20,9 +20,7 @@ class MyListsWidget extends StatefulWidget {
 class _MyListsWidgetState extends State<StatefulWidget> {
   ListApiProvider _apiProvider = ListApiProvider();
   List<Widget> lists = [
-    InvitationsTileWidget(
-      goToInvitationsFunction: () => print("go to invitations"),
-    )
+    InvitationsTileWidget()
   ];
 
   _MyListsWidgetState() {
@@ -31,7 +29,6 @@ class _MyListsWidgetState extends State<StatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text("My shopping lists"),
@@ -80,13 +77,13 @@ class _MyListsWidgetState extends State<StatefulWidget> {
         List<ListResponseDto> dtos = responseBody.map((dto) => ListResponseDto.fromJson(dto)).toList();
         if (dtos.isNotEmpty)
           lists = dtos.map((dto) => ListTileWidget(listDto: dto, goToProductsListWidget: _goToProductsWidget(dto),)).cast<Widget>().toList();
-          lists.add(InvitationsTileWidget(goToInvitationsFunction: () => print("go to invitations"),));
+          lists.add(InvitationsTileWidget());
       });
     }
   }
 
   Function _goToProductsWidget(ListResponseDto dto) {
     return (context) => Navigator.push(context, MaterialPageRoute(
-        builder: (context) => ProductsListWidget(id: dto.id, name: dto.name,)));
+        builder: (context) => ProductsListWidget(listDto: dto,)));
   }
 }

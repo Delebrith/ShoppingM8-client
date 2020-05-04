@@ -1,4 +1,4 @@
-import 'package:shoppingm8_fe/user/userDto.dart';
+import 'package:shoppingm8_fe/user/dto/userDto.dart';
 
 class ListResponseDto {
   final num id;

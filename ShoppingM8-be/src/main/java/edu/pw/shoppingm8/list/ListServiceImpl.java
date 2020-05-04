@@ -4,6 +4,8 @@ import edu.pw.shoppingm8.authentication.AuthenticationService;
 import edu.pw.shoppingm8.list.api.dto.ListModificationDto;
 import edu.pw.shoppingm8.list.exception.ForbiddenListOperationException;
 import edu.pw.shoppingm8.list.exception.ListNotFoundException;
+import edu.pw.shoppingm8.list.invitation.db.ListInvitationRepository;
+import edu.pw.shoppingm8.product.ProductRepository;
 import edu.pw.shoppingm8.user.db.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.Collection;
 @Transactional
 public class ListServiceImpl implements ListService {
     private final ListRepository listRepository;
+    private final ListInvitationRepository listInvitationRepository;
+    private final ProductRepository productRepository;
     private final AuthenticationService authenticationService;
 
     @Override
@@ -45,6 +49,8 @@ public class ListServiceImpl implements ListService {
     @Override
     public void delete(List list) {
         checkIfUserIsOwner(list);
+        listInvitationRepository.deleteByList(list);
+        productRepository.deleteByList(list);
         listRepository.delete(list);
     }
 

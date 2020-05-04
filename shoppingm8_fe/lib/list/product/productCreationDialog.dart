@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
+import 'package:shoppingm8_fe/list/product/dto/productResponseDto.dart';
 import 'package:shoppingm8_fe/list/product/productCategory.dart';
 import 'package:dropdown_formfield/dropdown_formfield.dart';
 
@@ -122,15 +123,7 @@ class _ProductCreationWidgetState extends State {
     Response response = await apiProvider.createProduct(dto);
     if (response.statusCode == 201) {
       Navigator.pop(context);
-      final scaffold = Scaffold.of(context);
-      scaffold.showSnackBar(
-        SnackBar(
-          content: const Text('Product created'),
-          action: SnackBarAction(
-              label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar),
-        ),
-      );
-      onSuccess();
+      onSuccess(ProductResponseDto.fromJson(response.data));
     } else {
       Navigator.pop(context);
       ErrorDto error = ErrorDto.fromJson(response.data);
