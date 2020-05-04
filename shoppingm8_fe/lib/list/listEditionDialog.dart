@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/list/dto/listRequestDto.dart';
 import 'package:shoppingm8_fe/list/dto/listResponseDto.dart';
@@ -70,10 +71,12 @@ class ListEditionDialog extends StatelessWidget {
     Response response = await _apiProvider.updateList(listDto.id, dto);
     if (response.statusCode >= 200 && response.statusCode < 300) {
       onSuccess(ListResponseDto.fromJson(response.data));
+      Fluttertoast.showToast(msg: "List successfully changed!");
       Navigator.pop(context);
     } else {
       Navigator.pop(context);
       ErrorDto error = ErrorDto.fromJson(response.data);
+      Fluttertoast.showToast(msg: "List could not be updated. " + error.message, backgroundColor: Colors.orangeAccent);
     }
   }
 }

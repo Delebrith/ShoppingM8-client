@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/list/product/dto/productResponseDto.dart';
 import 'package:shoppingm8_fe/list/product/productCategory.dart';
@@ -133,22 +134,10 @@ class _ProductEditionWidgetState extends State {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       onSuccess(ProductResponseDto.fromJson(response.data));
       Navigator.pop(context);
+      Fluttertoast.showToast(msg: "Product updated");
     } else {
-      Navigator.pop(context);
       ErrorDto error = ErrorDto.fromJson(response.data);
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text("Could not edit product"),
-            content: Text(error.message),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Close"),
-                onPressed: Navigator.of(context).pop,
-              )
-            ],
-          )
-      );
+      Fluttertoast.showToast(msg: "Could not update product. " + error.message, backgroundColor: Colors.orangeAccent);
     }
   }
 

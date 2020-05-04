@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
 import 'package:shoppingm8_fe/common/customPopupMenuItem.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
@@ -149,6 +150,8 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
               ).toList();
         }
       });
+    } else {
+      Fluttertoast.showToast(msg: "Could not download products.", backgroundColor: Colors.orangeAccent);
     }
   }
 
@@ -230,6 +233,9 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       Navigator.pop(context);
       Navigator.pop(context);
+      Fluttertoast.showToast(msg: "List deleted");
+    } else {
+      Fluttertoast.showToast(msg: "Could not delete list.", backgroundColor: Colors.orangeAccent);
     }
     Navigator.pop(context);
   }
@@ -239,6 +245,9 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       Navigator.pop(context);
       Navigator.pop(context);
+      Fluttertoast.showToast(msg: "You left list.");
+    } else {
+      Fluttertoast.showToast(msg: "Could not leave list.", backgroundColor: Colors.orangeAccent);
     }
     Navigator.pop(context);
   }

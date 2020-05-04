@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
 import 'package:shoppingm8_fe/list/invitation/sentListInvitationInfoWidget.dart';
 
@@ -63,6 +65,9 @@ class _SentInvitationWidgetState extends State<SentInvitationWidget> {
       setState(() {
         visible = false;
       });
+    } else {
+      ErrorDto error = ErrorDto.fromJson(response.data);
+      Fluttertoast.showToast(msg: "Could not withdraw invitation. " + error.message, backgroundColor: Colors.orangeAccent);
     }
   }
 }

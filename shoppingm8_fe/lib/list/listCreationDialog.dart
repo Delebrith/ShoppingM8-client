@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/list/dto/listRequestDto.dart';
 import 'package:shoppingm8_fe/list/listApiProvider.dart';
@@ -65,17 +66,10 @@ class ListCreationDialog extends StatelessWidget {
     _listForm.currentState.save();
     ListRequestDto dto = ListRequestDto(name: _name);
     Response response = await apiProvider.createList(dto);
-    if (response.statusCode == 201) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       Navigator.pop(context);
-      final scaffold = Scaffold.of(context);
-      scaffold.showSnackBar(
-        SnackBar(
-          content: const Text('List created'),
-          action: SnackBarAction(
-              label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar),
-        ),
-      );
       onSuccess();
+      Fluttertoast.showToast(msg: "List created!");
     } else {
       Navigator.pop(context);
       ErrorDto error = ErrorDto.fromJson(response.data);

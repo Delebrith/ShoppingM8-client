@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/list/product/productApiProvider.dart';
 import 'package:shoppingm8_fe/list/product/productCategory.dart';
@@ -126,20 +127,10 @@ class _ProductWidgetState extends State<ProductWidget> {
       setState(() {
         visible = false;
       });
+      Fluttertoast.showToast(msg: "Product deleted");
     } else {
       ErrorDto error = ErrorDto.fromJson(response.data);
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: Text("Could not delete product"),
-                content: Text(error.message),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Close"),
-                    onPressed: Navigator.of(context).pop,
-                  )
-                ],
-              ));
+      Fluttertoast.showToast(msg: "Could not delete product. " + error.message, backgroundColor: Colors.orangeAccent);
     }
   }
 }

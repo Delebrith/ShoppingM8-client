@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/list/invitation/dto/listInvitationDto.dart';
 import 'package:shoppingm8_fe/list/invitation/dto/myListInvitationsDto.dart';
 import 'package:shoppingm8_fe/list/invitation/listInvitationApiProvider.dart';
@@ -93,6 +94,8 @@ class _ListInvitationsWidgetState extends State<ListInvitationsWidget> {
           _processSentInvitationsIntoWidgets(sent);
         }
       });
+    } else {
+      Fluttertoast.showToast(msg: "Could not download invitations.", backgroundColor: Colors.orangeAccent);
     }
   }
 

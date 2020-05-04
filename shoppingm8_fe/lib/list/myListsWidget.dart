@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
 import 'package:shoppingm8_fe/list/invitationsTileWidget.dart';
 import 'package:shoppingm8_fe/list/listApiProvider.dart';
@@ -79,6 +80,8 @@ class _MyListsWidgetState extends State<StatefulWidget> {
           lists = dtos.map((dto) => ListTileWidget(listDto: dto, goToProductsListWidget: _goToProductsWidget(dto),)).cast<Widget>().toList();
           lists.add(InvitationsTileWidget());
       });
+    } else {
+      Fluttertoast.showToast(msg: "Could not download lists.", backgroundColor: Colors.orangeAccent);
     }
   }
 

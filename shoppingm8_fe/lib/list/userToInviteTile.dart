@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
 import 'package:shoppingm8_fe/list/dto/listResponseDto.dart';
 import 'package:shoppingm8_fe/list/listApiProvider.dart';
@@ -107,6 +108,8 @@ class _UserToInviteWidgetState extends State<UserToInviteTileWidget> {
       setState(() {
         invited = true;
       });
+    } else {
+      Fluttertoast.showToast(msg: "Could not invite user", backgroundColor: Colors.orangeAccent);
     }
   }
 

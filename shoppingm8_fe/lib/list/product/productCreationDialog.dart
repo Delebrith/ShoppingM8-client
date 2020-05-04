@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/list/product/dto/productResponseDto.dart';
 import 'package:shoppingm8_fe/list/product/productCategory.dart';
@@ -124,22 +125,10 @@ class _ProductCreationWidgetState extends State {
     if (response.statusCode == 201) {
       Navigator.pop(context);
       onSuccess(ProductResponseDto.fromJson(response.data));
+      Fluttertoast.showToast(msg: "Product created");
     } else {
-      Navigator.pop(context);
       ErrorDto error = ErrorDto.fromJson(response.data);
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text("Could not add new product"),
-            content: Text(error.message),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Close"),
-                onPressed: Navigator.of(context).pop,
-              )
-            ],
-          )
-      );
+      Fluttertoast.showToast(msg: "Could not create product. " + error.message, backgroundColor: Colors.orangeAccent);
     }
   }
 

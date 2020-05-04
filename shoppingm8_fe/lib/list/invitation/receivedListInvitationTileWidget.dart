@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
+import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
 import 'package:shoppingm8_fe/list/invitation/dto/listInvitationDto.dart';
 import 'package:shoppingm8_fe/list/invitation/listInvitationApiProvider.dart';
@@ -81,6 +83,9 @@ class _ReceivedInvitationWidget extends State<ReceivedInvitationWidget> {
       setState(() {
         visible = false;
       });
+    } else {
+      ErrorDto error = ErrorDto.fromJson(response.data);
+      Fluttertoast.showToast(msg: "Could not accept invitation. " + error.message, backgroundColor: Colors.orangeAccent);
     }
   }
 
@@ -90,6 +95,9 @@ class _ReceivedInvitationWidget extends State<ReceivedInvitationWidget> {
       setState(() {
         visible = false;
       });
+    } else {
+      ErrorDto error = ErrorDto.fromJson(response.data);
+      Fluttertoast.showToast(msg: "Could not reject invitation. " + error.message, backgroundColor: Colors.orangeAccent);
     }
   }
 }

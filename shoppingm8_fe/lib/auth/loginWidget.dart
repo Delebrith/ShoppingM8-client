@@ -247,7 +247,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   _onLoginError(Response response) {
-    var responseBody = ErrorDto.fromJson(jsonDecode(response.data));
+    var responseBody = ErrorDto.fromJson(response.data);
     showDialog(context: context,
         builder: (BuildContext context) {
           return AlertDialog(

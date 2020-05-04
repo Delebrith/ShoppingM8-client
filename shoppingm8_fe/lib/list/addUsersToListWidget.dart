@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/list/dto/listResponseDto.dart';
 import 'package:shoppingm8_fe/list/userToInviteTile.dart';
 import 'package:shoppingm8_fe/user/dto/userDto.dart';
@@ -87,6 +88,8 @@ class _AddUsersTopListWidget extends State<AddUsersToListWidget> {
             .cast<Widget>()
             .toList();
       });
+    } else {
+      Fluttertoast.showToast(msg: "Could not download users.", backgroundColor: Colors.orangeAccent);
     }
   }
 }
