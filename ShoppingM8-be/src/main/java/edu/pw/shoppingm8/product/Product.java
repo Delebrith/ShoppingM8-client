@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Builder.Default;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @NoArgsConstructor
@@ -22,7 +24,8 @@ public class Product {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "list_id", nullable = false)
+    @JoinColumn(name = "list_id", nullable = false, foreignKey = @ForeignKey(name = "PRODUCT_FK1"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List list;
 
     @Column(nullable = false)

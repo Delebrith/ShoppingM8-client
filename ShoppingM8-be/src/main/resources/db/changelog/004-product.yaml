@@ -51,3 +51,4 @@ databaseChangeLog:
             constraintName: Product_FK1
             referencedTableName: List
             referencedColumnNames: id
+            onDelete: CASCADE

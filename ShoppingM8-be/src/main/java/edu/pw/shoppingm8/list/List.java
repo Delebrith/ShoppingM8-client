@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 import edu.pw.shoppingm8.user.db.User;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +29,7 @@ public class List {
 
     @ManyToOne
     @JoinColumn(name = "OWNER_ID", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User owner;
 
     @OneToMany(fetch = FetchType.EAGER)

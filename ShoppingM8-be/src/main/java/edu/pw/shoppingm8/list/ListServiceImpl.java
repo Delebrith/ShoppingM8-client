@@ -49,8 +49,6 @@ public class ListServiceImpl implements ListService {
     @Override
     public void delete(List list) {
         checkIfUserIsOwner(list);
-        listInvitationRepository.deleteByList(list);
-        productRepository.deleteByList(list);
         listRepository.delete(list);
     }
 

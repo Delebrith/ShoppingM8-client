@@ -40,11 +40,13 @@ databaseChangeLog:
                   name: list_id
                   type: bigint
                   constraints:
+                    primaryKey: true
                     nullable: false
               - column:
                   name: user_id
                   type: bigint
                   constraints:
+                    primaryKey: true
                     nullable: false
 
         - addForeignKeyConstraint:

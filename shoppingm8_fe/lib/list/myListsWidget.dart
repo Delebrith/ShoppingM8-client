@@ -20,9 +20,7 @@ class MyListsWidget extends StatefulWidget {
 
 class _MyListsWidgetState extends State<StatefulWidget> {
   ListApiProvider _apiProvider = ListApiProvider();
-  List<Widget> lists = [
-    InvitationsTileWidget()
-  ];
+  List<Widget> lists = [];
 
   _MyListsWidgetState() {
     _getLists();
@@ -41,7 +39,7 @@ class _MyListsWidgetState extends State<StatefulWidget> {
             height: double.infinity,
             child: PageView(
               scrollDirection: Axis.horizontal,
-              children: lists,
+              children: lists + [InvitationsTileWidget(addToListsFunction: _addToLists,)],
             ),
           ),
           Container(
@@ -78,7 +76,6 @@ class _MyListsWidgetState extends State<StatefulWidget> {
         List<ListResponseDto> dtos = responseBody.map((dto) => ListResponseDto.fromJson(dto)).toList();
         if (dtos.isNotEmpty)
           lists = dtos.map((dto) => ListTileWidget(listDto: dto, goToProductsListWidget: _goToProductsWidget(dto),)).cast<Widget>().toList();
-          lists.add(InvitationsTileWidget());
       });
     } else {
       Fluttertoast.showToast(msg: "Could not download lists.", backgroundColor: Colors.orangeAccent);
@@ -88,5 +85,11 @@ class _MyListsWidgetState extends State<StatefulWidget> {
   Function _goToProductsWidget(ListResponseDto dto) {
     return (context) => Navigator.push(context, MaterialPageRoute(
         builder: (context) => ProductsListWidget(listDto: dto,)));
+  }
+
+  void _addToLists(ListResponseDto dto) {
+    setState(() {
+      lists.add(ListTileWidget(listDto: dto, goToProductsListWidget: _goToProductsWidget(dto),));
+    });
   }
 }

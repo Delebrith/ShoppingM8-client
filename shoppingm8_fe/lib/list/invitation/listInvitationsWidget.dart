@@ -9,14 +9,19 @@ import 'package:shoppingm8_fe/list/invitation/receivedListInvitationTileWidget.d
 import 'package:shoppingm8_fe/list/invitation/sentListInvitationTileWidget.dart';
 
 class ListInvitationsWidget extends StatefulWidget {
+  final Function addToListsFunction;
+
+  const ListInvitationsWidget({Key key, this.addToListsFunction}) : super(key: key);
+
   @override
-  _ListInvitationsWidgetState createState() => _ListInvitationsWidgetState();
+  _ListInvitationsWidgetState createState() => _ListInvitationsWidgetState(addToListFunction: addToListsFunction);
 }
 
 class _ListInvitationsWidgetState extends State<ListInvitationsWidget> {
+  final Function addToListFunction;
   ListInvitationApiProvider _apiProvider = ListInvitationApiProvider();
 
-  _ListInvitationsWidgetState() {
+  _ListInvitationsWidgetState({this.addToListFunction}) {
     _getInvitations();
   }
 
@@ -114,6 +119,7 @@ class _ListInvitationsWidgetState extends State<ListInvitationsWidget> {
         .map((dto) => ReceivedInvitationWidget(
               invitationDto: dto,
               apiProvider: _apiProvider,
+              addToListsFunction: addToListFunction,
             ))
         .toList();
     receivedInvitationList = invitations;

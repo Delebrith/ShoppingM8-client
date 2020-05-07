@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
+import 'package:shoppingm8_fe/list/dto/listResponseDto.dart';
 import 'package:shoppingm8_fe/list/invitation/dto/listInvitationDto.dart';
 import 'package:shoppingm8_fe/list/invitation/listInvitationApiProvider.dart';
 import 'package:shoppingm8_fe/user/dto/userDto.dart';
@@ -15,19 +16,21 @@ import 'listInvitationInfoWidget.dart';
 class ReceivedInvitationWidget extends StatefulWidget {
   final ListInvitationDto invitationDto;
   final ListInvitationApiProvider apiProvider;
+  final Function addToListsFunction;
 
-  const ReceivedInvitationWidget({Key key, this.invitationDto, this.apiProvider}) : super(key: key);
+  const ReceivedInvitationWidget({Key key, this.invitationDto, this.apiProvider, this.addToListsFunction}) : super(key: key);
 
   @override
-  _ReceivedInvitationWidget createState() => _ReceivedInvitationWidget(invitationDto: invitationDto, apiProvider: apiProvider);
+  _ReceivedInvitationWidget createState() => _ReceivedInvitationWidget(invitationDto: invitationDto, apiProvider: apiProvider, addToListsFunction: addToListsFunction);
 }
 
 class _ReceivedInvitationWidget extends State<ReceivedInvitationWidget> {
   final ListInvitationDto invitationDto;
   final ListInvitationApiProvider apiProvider;
+  final Function addToListsFunction;
   bool visible = true;
 
-  _ReceivedInvitationWidget({this.invitationDto, this.apiProvider});
+  _ReceivedInvitationWidget({this.invitationDto, this.apiProvider, this.addToListsFunction});
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +86,7 @@ class _ReceivedInvitationWidget extends State<ReceivedInvitationWidget> {
       setState(() {
         visible = false;
       });
+      _refreshListsAfterAcceptance(invitationDto.list, invitationDto.invited);
     } else {
       ErrorDto error = ErrorDto.fromJson(response.data);
       Fluttertoast.showToast(msg: "Could not accept invitation. " + error.message, backgroundColor: Colors.orangeAccent);
@@ -99,5 +103,10 @@ class _ReceivedInvitationWidget extends State<ReceivedInvitationWidget> {
       ErrorDto error = ErrorDto.fromJson(response.data);
       Fluttertoast.showToast(msg: "Could not reject invitation. " + error.message, backgroundColor: Colors.orangeAccent);
     }
+  }
+
+  void _refreshListsAfterAcceptance(ListResponseDto list, UserDto invited) {
+    list.members.add(invited);
+    addToListsFunction(list);
   }
 }
