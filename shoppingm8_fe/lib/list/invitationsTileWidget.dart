@@ -16,10 +16,9 @@ class InvitationsTileWidget extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.only(bottom: 90, top: 50, left: 40, right: 40),
       child: DottedBorder(
-        color: Colors.blueGrey,
-        dashPattern: [8, 4],
+        color: Colors.grey,
+        dashPattern: [10, 4],
         strokeWidth: 3,
-        strokeCap: StrokeCap.butt,
         child: Card(
           color: Color.fromARGB(180, 242, 255, 255),
           borderOnForeground: false,
@@ -36,12 +35,13 @@ class InvitationsTileWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.all(15),
+                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child:
-                      Text("See invitations:",
+                      Text("Click to see \ninvitations",
                           style: TextStyle(
-                              fontSize: 28
-                          )
+                              fontSize: MediaQuery.of(context).size.width / 15
+                          ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     Padding(
