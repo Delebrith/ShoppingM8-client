@@ -11,6 +11,7 @@ import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
 import 'auth/loginWidget.dart';
 
 String serverUrl = "http://localhost:8080";
+Dio defaultDio = Dio();
 
 void main() => runApp(MyApp());
 
@@ -53,17 +54,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Dio dio = Dio();
   AuthenticationApiProvider authenticationApiProvider =
-      AuthenticationApiProvider(serverUrl);
+      AuthenticationApiProvider();
   Widget _startingWidget = Center();
   bool _serverResponding = false;
 
   _MyHomePageState() {
-    dio.interceptors.add(AuthenticationInterceptor(
-        serverUrl: serverUrl, onAuthenticationError: _onAuthenticationError));
-    dio.options.validateStatus = (status) => status < 500 && status != 401;
-    dio.options.connectTimeout = 2000;
+    defaultDio.interceptors.add(AuthenticationInterceptor(onAuthenticationError: _onAuthenticationError));
+    defaultDio.options.validateStatus = (status) => status < 500 && status != 401;
+    defaultDio.options.connectTimeout = 2000;
     _setStartingWidget();
     Timer(Duration(seconds: 5), () {
       _showDialogIfServerNotResponding();
@@ -101,21 +100,15 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.push(
         this.context,
         MaterialPageRoute(
-            builder: (context) => LoginWidget(
-                  serverUrl: serverUrl,
-                  dio: dio,
-                )));
+            builder: (context) => LoginWidget()));
   }
 
   void _setStartingWidget() async {
     try {
-      var me = await authenticationApiProvider.me(dio);
+      var me = await authenticationApiProvider.me();
       if (me.statusCode == 200) {
         setState(() {
-          _startingWidget = MainMenuWidget(
-            serverUrl: serverUrl,
-            dio: dio,
-          );
+          _startingWidget = MainMenuWidget();
           _serverResponding = true;
         });
       }

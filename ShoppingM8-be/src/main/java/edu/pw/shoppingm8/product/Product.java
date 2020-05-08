@@ -1,33 +1,32 @@
 package edu.pw.shoppingm8.product;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.*;
 
+import edu.pw.shoppingm8.list.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Builder.Default;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-@IdClass(ProductId.class)
 public class Product {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    @Id
-    private Long listId;
+    @ManyToOne
+    @JoinColumn(name = "list_id", nullable = false, foreignKey = @ForeignKey(name = "PRODUCT_FK1"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List list;
 
     @Column(nullable = false)
     private String unit;

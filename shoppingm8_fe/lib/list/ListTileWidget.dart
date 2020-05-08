@@ -15,7 +15,9 @@ class ListTileWidget extends StatelessWidget {
     ),
   ];
 
-  ListTileWidget({Key key, this.listDto, this.goToProductsListWidget}) : super(key: key);
+  ListTileWidget({Key key, this.listDto, this.goToProductsListWidget}) : super(key: key) {
+    _setMemberLabels();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +120,15 @@ class ListTileWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _setMemberLabels() {
+    if (listDto.members.isNotEmpty) {
+      _memberLabels = listDto.members
+          .map((userDto) => UserLabelWidget(userDto: userDto, fontSize: 20, avatarRadius: 35))
+          .cast<Widget>()
+          .toList();
+    }
   }
 
 }

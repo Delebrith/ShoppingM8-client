@@ -1,20 +1,21 @@
 package edu.pw.shoppingm8.product;
 
-import java.util.List;
-
+import edu.pw.shoppingm8.list.List;
 import edu.pw.shoppingm8.product.api.dto.ProductCreateRequestDto;
 import edu.pw.shoppingm8.product.api.dto.ProductPatchRequestDto;
 
+import java.util.Collection;
+
 public interface ProductService {
-    List<Product> getProducts(Long listId);
+    Collection<Product> getProductsByList(List list);
 
-    Product getProduct(Long listId, Long productId);
+    Product getProduct(List list, Long productId);
 
-    void purchaseProduct(Long listId, Long productId, Double amountChange);
+    void purchaseProduct(List list, Long productId, Double amountChange);
 
-    Product createProduct(Long listId, ProductCreateRequestDto productDto);
+    Product createProduct(List list, ProductCreateRequestDto productDto);
 
-    void updateProduct(Long listId, Long productId, ProductPatchRequestDto productDto);
+    Product updateProduct(List list, Long productId, ProductPatchRequestDto productDto);
 
-    void deleteProduct(Long listId, Long productId);
+    void deleteProduct(List list, Long productId);
 }

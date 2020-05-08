@@ -1,7 +1,7 @@
 package edu.pw.shoppingm8.list;
 
 import edu.pw.shoppingm8.list.api.dto.ListModificationDto;
-import edu.pw.shoppingm8.user.User;
+import edu.pw.shoppingm8.user.db.User;
 
 import java.util.Collection;
 
@@ -21,4 +21,8 @@ public interface ListService {
     Collection<List> getUsersLists(User user);
 
     void checkIfListExistsAndUserHasAccess(Long id);
+
+    void addMemberToList(List list, User user);
+
+    void leaveList(List list);
 }

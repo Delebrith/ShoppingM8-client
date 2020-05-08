@@ -1,13 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:shoppingm8_fe/common/ApiProvider.dart';
 
+import '../../main.dart';
 import 'dto/productRequestDto.dart';
 
 class ProductApiProvider extends ApiProvider {
   static const String base_endpoint = "/list/{id}/product/";
   final num id;
 
-  ProductApiProvider({this.id, String serverUrl, Dio dio}) : super(serverUrl: serverUrl, dio: dio) {
+  ProductApiProvider({this.id}) : super() {
     this.uri = Uri.parse(serverUrl + "/list/$id/product/");
   }
 

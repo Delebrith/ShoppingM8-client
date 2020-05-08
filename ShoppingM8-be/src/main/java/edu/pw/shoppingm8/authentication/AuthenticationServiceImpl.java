@@ -11,7 +11,7 @@ import edu.pw.shoppingm8.authentication.social.SocialMediaProfileDto;
 import edu.pw.shoppingm8.authentication.social.SocialMediaService;
 import edu.pw.shoppingm8.user.UserService;
 import edu.pw.shoppingm8.user.exception.UserNotFoundException;
-import edu.pw.shoppingm8.user.User;
+import edu.pw.shoppingm8.user.db.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.lang3.RandomStringUtils;

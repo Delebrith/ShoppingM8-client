@@ -17,30 +17,19 @@ import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
 import 'dto/authenticationResponseDto.dart';
 
 class RegistrationWidget extends StatefulWidget {
-  final String serverUrl;
-  final Dio dio;
-
-  const RegistrationWidget({Key key, this.serverUrl, this.dio}) : super(key: key);
-
   @override
-  _RegistrationWidgetState createState() => _RegistrationWidgetState(serverUrl: serverUrl, dio: dio);
+  _RegistrationWidgetState createState() => _RegistrationWidgetState();
 }
 
 class _RegistrationWidgetState extends State<RegistrationWidget> {
   GlobalKey<FormState> _registrationForm = GlobalKey<FormState>();
-  final String serverUrl;
-  final Dio dio;
-  AuthenticationApiProvider authenticationApiProvider;
+  AuthenticationApiProvider authenticationApiProvider = AuthenticationApiProvider();
 
   String _email;
   String _password;
   String _displayName;
   File _image;
   var _autovalidate = false;
-
-  _RegistrationWidgetState({this.serverUrl, this.dio}) {
-    authenticationApiProvider = AuthenticationApiProvider(serverUrl);
-  }
 
   Future getImage(ImageSource source) async {
     var image = await ImagePicker.pickImage(source: source);
@@ -209,7 +198,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
       storage.write(key: "JWT_access_token", value: responseBody.accessToken);
       storage.write(key: "JWT_refresh_token", value: responseBody.refreshToken);
       Navigator.push(context,
-          MaterialPageRoute(builder: (context) => MainMenuWidget(serverUrl: serverUrl,)));
+          MaterialPageRoute(builder: (context) => MainMenuWidget()));
     } else {
       var body = await response.stream.bytesToString();
       showDialog(context: context,

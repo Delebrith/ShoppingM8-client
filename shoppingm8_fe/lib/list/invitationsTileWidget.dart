@@ -2,26 +2,26 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
+import 'package:shoppingm8_fe/list/invitation/listInvitationsWidget.dart';
 
 class InvitationsTileWidget extends StatelessWidget {
-  final Function goToInvitationsFunction;
+  final Function addToListsFunction;
 
-  InvitationsTileWidget({Key key, this.goToInvitationsFunction}) : super(key: key);
+  const InvitationsTileWidget({Key key, this.addToListsFunction}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      padding: EdgeInsets.only(bottom: 90, top: 50, left: 40, right: 40),
+      padding: EdgeInsets.only(bottom: 100, top: 50, left: 50, right: 50),
       child: DottedBorder(
-        color: Colors.blueGrey,
-        dashPattern: [8, 4],
-        strokeWidth: 3,
-        strokeCap: StrokeCap.butt,
+        color: Colors.grey,
+        dashPattern: [10, 4],
+        strokeWidth: 1,
         child: Card(
-          color: Color.fromARGB(180, 242, 255, 255),
-          borderOnForeground: false,
+          color: Color.fromARGB(12, 0, 100, 100),
+          elevation: 0,
           margin: EdgeInsets.all(0),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
@@ -35,12 +35,13 @@ class InvitationsTileWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.all(15),
+                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child:
-                      Text("See invitations:",
+                      Text("Click to see \ninvitations",
                           style: TextStyle(
-                              fontSize: 28
-                          )
+                              fontSize: MediaQuery.of(context).size.width / 15
+                          ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     Padding(
@@ -49,7 +50,7 @@ class InvitationsTileWidget extends StatelessWidget {
                         icon: Icons.group_add,
                         radius: 40,
                         color: Colors.lightBlueAccent,
-                        onPressed: goToInvitationsFunction,
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ListInvitationsWidget(addToListsFunction: addToListsFunction))),
                       ),
                     )
                   ],

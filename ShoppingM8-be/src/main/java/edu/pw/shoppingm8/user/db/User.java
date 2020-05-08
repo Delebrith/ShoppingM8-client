@@ -1,4 +1,4 @@
-package edu.pw.shoppingm8.user;
+package edu.pw.shoppingm8.user.db;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

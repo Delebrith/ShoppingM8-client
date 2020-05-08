@@ -1,9 +1,15 @@
 package edu.pw.shoppingm8.product;
 
-import java.util.List;
-
+import edu.pw.shoppingm8.list.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository extends JpaRepository<Product, ProductId>{
-    List<Product> findByListId(Long listId);
+import java.util.Collection;
+import java.util.Optional;
+
+public interface ProductRepository extends JpaRepository<Product, Long>{
+    Collection<Product> findByList(List list);
+
+    Optional<Product> findByIdAndList(Long productId, List list);
+
+    void deleteByList(List list);
 }
