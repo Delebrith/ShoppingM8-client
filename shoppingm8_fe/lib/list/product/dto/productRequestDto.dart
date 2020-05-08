@@ -13,7 +13,7 @@ class ProductRequestDto {
     map['name'] = name;
     map['requiredAmount'] = requiredAmount;
     map['unit'] = unit;
-    map['category'] = category.toString();
+    map['category'] = category.toString().replaceFirst("ProductCategory.", "");
     return map;
   }
 }

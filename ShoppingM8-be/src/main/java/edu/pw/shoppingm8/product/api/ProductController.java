@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import edu.pw.shoppingm8.list.List;
+import edu.pw.shoppingm8.list.ListService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("list/{listId}/product")
 @RequiredArgsConstructor
 @Slf4j
-public class ProductControler {
+public class ProductController {
     private final ProductService productService;
+    private final ListService listService;
     
     @ApiOperation(value = "Get list products", nickname = "get list products", notes = "",
             authorizations = {@Authorization(value = "JWT")})
@@ -42,8 +45,10 @@ public class ProductControler {
         @ApiResponse(code = 404, message = "If invalid list id was provided")
     @GetMapping
     public ResponseEntity<Iterable<ProductResponseDto>> get(@PathVariable Long listId) {
+        List list = listService.getList(listId);
+        listService.checkIfUserHasAccessTo(list);
         return ResponseEntity.ok(
-            productService.getProducts(listId)
+            productService.getProductsByList(list)
             .stream().map(ProductResponseDto::of).collect(Collectors.toList()));
     }
     
@@ -54,7 +59,9 @@ public class ProductControler {
         @ApiResponse(code = 404, message = "If invalid id was provided")})
     @GetMapping("{id}")
     public ResponseEntity<ProductResponseDto> getProduct(@PathVariable Long listId, @PathVariable Long id) {
-        return ResponseEntity.ok(ProductResponseDto.of(productService.getProduct(listId, id)));
+        List list = listService.getList(listId);
+        listService.checkIfUserHasAccessTo(list);
+        return ResponseEntity.ok(ProductResponseDto.of(productService.getProduct(list, id)));
     }
 
     @ApiOperation(value = "Create product", nickname = "create product", notes = "",
@@ -65,12 +72,14 @@ public class ProductControler {
         @ApiResponse(code = 403, message = "If user does not have access to the list"),
         @ApiResponse(code = 404, message = "If invalid list id was provided")})
     @PostMapping
-    public ResponseEntity<Void> createProduct(
+    public ResponseEntity<ProductResponseDto> createProduct(
         @PathVariable Long listId, @Valid @RequestBody ProductCreateRequestDto productDto) {
-        Product product = productService.createProduct(listId, productDto);
-        return ResponseEntity.created(
-            URI.create(String.format("/list/%d/product/%d", listId, product.getId())))
-            .build();
+        List list = listService.getList(listId);
+        listService.checkIfUserHasAccessTo(list);
+        Product product = productService.createProduct(list, productDto);
+        return ResponseEntity
+                .created(URI.create(String.format("/list/%d/product/%d", listId, product.getId())))
+                .body(ProductResponseDto.of(product));
     }
     
     @ApiOperation(value = "Patch product", nickname = "patch product", notes = "",
@@ -81,10 +90,11 @@ public class ProductControler {
         @ApiResponse(code = 403, message = "If user does not have access to the list"),
         @ApiResponse(code = 404, message = "If invalid id was provided")})
     @PatchMapping("{id}")
-    public ResponseEntity<Void> patchProduct(
-        @PathVariable Long listId, @PathVariable Long id, @Valid @RequestBody ProductPatchRequestDto productDto) {
-        productService.updateProduct(listId, id, productDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ProductResponseDto> updateProduct(
+            @PathVariable Long listId, @PathVariable Long id, @Valid @RequestBody ProductPatchRequestDto productDto) {
+        List list = listService.getList(listId);
+        listService.checkIfUserHasAccessTo(list);
+        return ResponseEntity.ok(ProductResponseDto.of(productService.updateProduct(list, id, productDto)));
     }
     
     @ApiOperation(value = "Purchase product", nickname = "puchase product", notes = "",
@@ -95,7 +105,9 @@ public class ProductControler {
         @ApiResponse(code = 404, message = "If invalid id was provided")})
     @PostMapping("{id}")
     public ResponseEntity<Void> purchaseProduct(@PathVariable Long listId, @PathVariable Long id, @RequestParam Double amount) {
-        productService.purchaseProduct(listId, id, amount);
+        List list = listService.getList(listId);
+        listService.checkIfUserHasAccessTo(list);
+        productService.purchaseProduct(list, id, amount);
         return ResponseEntity.ok().build();
     }
     
@@ -107,7 +119,9 @@ public class ProductControler {
         @ApiResponse(code = 404, message = "If invalid id was provided")})
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long listId, @PathVariable Long id) {
-        productService.deleteProduct(listId, id);
+        List list = listService.getList(listId);
+        listService.checkIfUserHasAccessTo(list);
+        productService.deleteProduct(list, id);
         return ResponseEntity.noContent().build();
     }
 }

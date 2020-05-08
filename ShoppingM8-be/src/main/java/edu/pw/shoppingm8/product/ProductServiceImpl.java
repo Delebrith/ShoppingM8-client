@@ -1,49 +1,45 @@
 package edu.pw.shoppingm8.product;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
+import edu.pw.shoppingm8.list.List;
 import org.springframework.stereotype.Service;
 
-import edu.pw.shoppingm8.list.ListService;
 import edu.pw.shoppingm8.product.api.dto.ProductCreateRequestDto;
 import edu.pw.shoppingm8.product.api.dto.ProductPatchRequestDto;
 import edu.pw.shoppingm8.product.exception.ProductNotFoundException;
 import lombok.AllArgsConstructor;
 
+import java.util.Collection;
+
 @Service
 @AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-    private final ListService listService;
 
     @Override
-    public List<Product> getProducts(Long listId) {
-        listService.checkIfListExistsAndUserHasAccess(listId);
-        return productRepository.findByListId(listId);
+    public Collection<Product> getProductsByList(List list) {
+        return productRepository.findByList(list);
     }
 
     @Override
-    public Product getProduct(Long listId, Long productId) {
-        listService.checkIfListExistsAndUserHasAccess(listId);
-        return productRepository.findById(new ProductId(productId, listId))
+    public Product getProduct(List list, Long productId) {
+        return productRepository.findByIdAndList(productId, list)
                 .orElseThrow(ProductNotFoundException::new);
     }
 
     @Transactional
     @Override
-    public void purchaseProduct(Long listId, Long productId, Double amountChange) {
-        Product product = getProduct(listId, productId);
+    public void purchaseProduct(List list, Long productId, Double amountChange) {
+        Product product = getProduct(list, productId);
         product.setPurchasedAmount(product.getPurchasedAmount() + amountChange);
         productRepository.save(product);
     }
 
     @Override
-    public Product createProduct(Long listId, ProductCreateRequestDto productDto) {
-        listService.checkIfListExistsAndUserHasAccess(listId);
+    public Product createProduct(List list, ProductCreateRequestDto productDto) {
         Product product = Product.builder()
-            .listId(listId)
+            .list(list)
             .name(productDto.getName())
             .unit(productDto.getUnit())
             .requiredAmount(productDto.getRequiredAmount())
@@ -56,8 +52,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public void updateProduct(Long listId, Long productId, ProductPatchRequestDto productDto) {
-        Product product = getProduct(listId, productId);
+    public Product updateProduct(List list, Long productId, ProductPatchRequestDto productDto) {
+        Product product = getProduct(list, productId);
         if (productDto.getName() != null)
             product.setName(productDto.getName());
         if (productDto.getRequiredAmount() != null)
@@ -67,12 +63,12 @@ public class ProductServiceImpl implements ProductService {
         if (productDto.getUnit() != null)
             product.setUnit(productDto.getUnit());
 
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 
     @Override
-    public void deleteProduct(Long listId, Long productId) {
-        productRepository.delete(getProduct(listId, productId));
+    public void deleteProduct(List list, Long productId) {
+        productRepository.delete(getProduct(list, productId));
     }
     
 }

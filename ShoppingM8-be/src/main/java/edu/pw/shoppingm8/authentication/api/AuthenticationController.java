@@ -2,7 +2,7 @@ package edu.pw.shoppingm8.authentication.api;
 
 import edu.pw.shoppingm8.authentication.AuthenticationService;
 import edu.pw.shoppingm8.authentication.api.dto.*;
-import edu.pw.shoppingm8.user.User;
+import edu.pw.shoppingm8.user.db.User;
 import edu.pw.shoppingm8.user.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -50,7 +50,7 @@ public class AuthenticationController {
                         return null;
                     }
                 })
-                .orElse(new byte[0]);
+                .orElse(null);
         User registered = userService
                 .register(registrationDto, picture);
         return ResponseEntity.created(URI.create("/user/" + registered.getId()))

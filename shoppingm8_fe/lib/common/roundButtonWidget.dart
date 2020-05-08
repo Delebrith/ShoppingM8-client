@@ -7,7 +7,7 @@ class RoundButtonWidget extends StatelessWidget {
   final Color color;
   final double radius;
 
-  const RoundButtonWidget({Key key, this.onPressed, this.icon, this.color, this.radius = 42}) : super(key: key);
+  RoundButtonWidget({Key key, this.onPressed, this.icon, this.color, this.radius = 42}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

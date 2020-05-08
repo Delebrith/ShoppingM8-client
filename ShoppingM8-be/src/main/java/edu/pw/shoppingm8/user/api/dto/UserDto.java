@@ -1,9 +1,11 @@
 package edu.pw.shoppingm8.user.api.dto;
 
-import edu.pw.shoppingm8.user.User;
+import edu.pw.shoppingm8.user.db.User;
+import lombok.Builder;
 import lombok.Value;
 
 @Value
+@Builder
 public class UserDto {
     private static final String USER_PICTURE_URL_TEMPLATE = "/user/%d/picture";
 
@@ -12,7 +14,11 @@ public class UserDto {
     String profilePicture;
 
     public static UserDto of(User user) {
-        return new UserDto(user.getId(), user.getName(), UserDto.buildProfilePictureUrl(user.getId()));
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .profilePicture(user.getProfilePicture() == null ? null : buildProfilePictureUrl(user.getId()))
+                .build();
     }
 
     private static String buildProfilePictureUrl(Long id) {
