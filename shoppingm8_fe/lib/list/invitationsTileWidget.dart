@@ -14,14 +14,14 @@ class InvitationsTileWidget extends StatelessWidget {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      padding: EdgeInsets.only(bottom: 90, top: 50, left: 40, right: 40),
+      padding: EdgeInsets.only(bottom: 100, top: 50, left: 50, right: 50),
       child: DottedBorder(
         color: Colors.grey,
         dashPattern: [10, 4],
-        strokeWidth: 3,
+        strokeWidth: 1,
         child: Card(
-          color: Color.fromARGB(180, 242, 255, 255),
-          borderOnForeground: false,
+          color: Color.fromARGB(12, 0, 100, 100),
+          elevation: 0,
           margin: EdgeInsets.all(0),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
