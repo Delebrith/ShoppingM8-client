@@ -109,7 +109,7 @@ class MainMenuWidget extends StatelessWidget {
 
   _moveToAccountManagement(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
-        builder: (context) => AccountManagementWidget(dio: dio, serverUrl: serverUrl)
+        builder: (context) => AccountManagementWidget()
     ));
   }
 }

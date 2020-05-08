@@ -2,59 +2,62 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shoppingm8_fe/main.dart';
 import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
+import 'package:shoppingm8_fe/auth/dto/authenticatedUserDto.dart';
 import 'package:shoppingm8_fe/auth/loginWidget.dart';
-import 'package:shoppingm8_fe/user/userDto.dart';
 
 class AccountManagementWidget extends StatefulWidget {
-  final String serverUrl;
-  final Dio dio;
-  
-  AccountManagementWidget({this.serverUrl, this.dio});
-
   @override
-  _AccountManagementWidgetState createState() => _AccountManagementWidgetState(dio: dio, serverUrl: serverUrl);
+  _AccountManagementWidgetState createState() => _AccountManagementWidgetState();
 }
 
 class _AccountManagementWidgetState extends State<StatefulWidget> {
-  final Dio dio;
-  final String serverUrl;
 
-  UserDto _userDto;
+  AuthenticatedUserDto _userDto;
   ImageProvider _image = AssetImage('assets/user.jpg');
 
   AuthenticationApiProvider _apiProvider;
-  _AccountManagementWidgetState({this.dio, this.serverUrl}) {
-    _apiProvider = AuthenticationApiProvider(serverUrl);
+  _AccountManagementWidgetState() {
+    _apiProvider = AuthenticationApiProvider();
     _showUser();
   }
 
-  Future<UserDto> _showUser() async {
-    Response response = await _apiProvider.me(dio);
+  Future<AuthenticatedUserDto> _showUser() async {
+    Response response = await _apiProvider.me();
     if (response.statusCode == 200) {
       setState(() {
-        _userDto = UserDto.fromJson(response.data);
+        _userDto = AuthenticatedUserDto.fromJson(response.data);
       });
       if (_userDto.profilePicture != null) {
-        String token = await FlutterSecureStorage().read(key: '');
+        String token = await FlutterSecureStorage().read(key: 'JWT_access_token');
         setState(() {
-          _image = NetworkImage(serverUrl + _userDto.profilePicture,
-            headers: {"Authorization": "Bearer " + token});
+          try {
+            _image = NetworkImage(serverUrl + _userDto.profilePicture,
+              headers: {"Authorization": "Bearer " + token});
+          } catch(e) {
+
+          }
         });
       }
     }
+    return _userDto;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Your Account"),
+      ),
+      body: Stack(
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage("assets/background.jpg"),
                     fit: BoxFit.cover
-                ),
+                )
               ),
             ),
             Center(
@@ -62,49 +65,64 @@ class _AccountManagementWidgetState extends State<StatefulWidget> {
                 child: FractionallySizedBox(
                   heightFactor: 0.8,
                   widthFactor: 0.8,
-                  child: Column(
-                
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      Title(
-                        color: Colors.black,
-                        child: Text(
-                            "Your account:",
-                            style: TextStyle(fontSize: 24),
-                            textAlign: TextAlign.center,
-                        )
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        child: Image(
-                            image: _image,
-                            width: 100,
-                            height: 100,
-                        )
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        child: Text(
-                          "Displayed name: ${_userDto?.name}"
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.all(10),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: FadeInImage(
+                              width: 100,
+                              height: 100,
+                              image: _image,
+                              placeholder: AssetImage('assets/user.jpg'),
+                              fit: BoxFit.cover
+                            )
+                          ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        child: FlatButton(
-                          child: Text("Delete account"),
-                          color: Colors.red,
-                          onPressed: _onDeleteAccount
-                        )
-                      ),
-                    ]
+                        Container(
+                          margin: EdgeInsets.all(5),
+                          child: Column(
+                            children:[
+                              Text(
+                                "${_userDto?.name}"
+                              ),
+                              Text(
+                                "${_userDto?.email}"
+                              )
+                            ]
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20, top: 80),
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.red,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: FlatButton(
+                            child: Text("Delete account"),
+                            textColor: Colors.red,
+                            color: Colors.white,
+                            onPressed: _onDeleteAccount
+                          )
+                        ),
+                      ]
+                    )
                   )
                 )
               )
             )
           ]
-        );
+        )
+    );
   }
 
   void _confirmAccountDelete(BuildContext context, Function confirmationCallback) {
@@ -141,14 +159,14 @@ class _AccountManagementWidgetState extends State<StatefulWidget> {
   }
 
   Future<void> _deleteAccount() async {
-    Response response = await _apiProvider.deleteAccount(dio);
+    Response response = await _apiProvider.deleteAccount();
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       var storage = FlutterSecureStorage();
       await storage.delete(key: "JWT_access_token");
       await storage.delete(key: "JWT_refresh_token");
       Navigator.push(context, MaterialPageRoute(
-          builder: (context) => LoginWidget(serverUrl: serverUrl)
+          builder: (context) => LoginWidget()
       ));
     }
   }
