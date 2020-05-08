@@ -38,11 +38,16 @@ public class UserController {
     @ApiOperation(value = "Get user info", nickname = "get user info", notes = "",
             authorizations = {@Authorization(value = "JWT")})
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "If valid credentials were provided", response = InputStreamResource.class),
+            @ApiResponse(code = 200, message = "If valid credentials were provided and user has a picture",
+                response = InputStreamResource.class),
+            @ApiResponse(code = 204, message = "If valid credentials were provided and user has no picture",),
             @ApiResponse(code = 400, message = "If invalid data was provided")})
     @GetMapping("/{id}/picture")
     ResponseEntity<InputStreamResource> getProfilePicture(@PathVariable Long id) {
         User user = userService.getUser(id);
+        byte[] picture = user.getProfilePicture();
+        if (picture == null)
+            return ResponseEntity.noContent().build();
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(new InputStreamResource(new ByteArrayInputStream(user.getProfilePicture())));

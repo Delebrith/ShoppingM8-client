@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shoppingm8_fe/auth/loginWidget.dart';
 import 'package:shoppingm8_fe/list/myListsWidget.dart';
+import 'package:shoppingm8_fe/user/accountManagementWidget.dart';
 
 import 'menuButtonWidget.dart';
 
@@ -68,7 +69,7 @@ class MainMenuWidget extends StatelessWidget {
                   children: <Widget>[
                     MenuButton(
                       title: "My account",
-                      onPressed: moveToAccountManagement,
+                      onPressed: () => _moveToAccountManagement(context),
                       color: Colors.pinkAccent,
                       icon: Icons.person,
                     ),
@@ -103,6 +104,12 @@ class MainMenuWidget extends StatelessWidget {
   _moveToListScreen(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
         builder: (context) => MyListsWidget()
+    ));
+  }
+
+  _moveToAccountManagement(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => AccountManagementWidget()
     ));
   }
 }
