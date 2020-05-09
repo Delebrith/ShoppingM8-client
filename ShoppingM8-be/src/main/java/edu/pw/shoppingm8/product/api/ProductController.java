@@ -104,10 +104,10 @@ public class ProductController {
         @ApiResponse(code = 403, message = "If user does not have access to the list"),
         @ApiResponse(code = 404, message = "If invalid id was provided")})
     @PostMapping("{id}")
-    public ResponseEntity<Void> purchaseProduct(@PathVariable Long listId, @PathVariable Long id, @RequestParam Double amount) {
+    public ResponseEntity<Void> purchaseProduct(@PathVariable Long listId, @PathVariable Long id, @RequestParam Double purchased) {
         List list = listService.getList(listId);
         listService.checkIfUserHasAccessTo(list);
-        productService.purchaseProduct(list, id, amount);
+        productService.purchaseProduct(list, id, purchased);
         return ResponseEntity.ok().build();
     }
     

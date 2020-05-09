@@ -37,6 +37,7 @@ dependencies:
   dropdown_formfield: ^0.1.2
   dotted_border: ^1.0.5
   fluttertoast: ^4.0.0
+  eventhandler: ^1.0.4
 
 dev_dependencies:
   flutter_test:
