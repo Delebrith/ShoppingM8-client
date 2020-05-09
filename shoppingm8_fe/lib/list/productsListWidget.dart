@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:eventhandler/eventhandler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
@@ -11,6 +12,7 @@ import 'package:shoppingm8_fe/list/listApiProvider.dart';
 import 'package:shoppingm8_fe/list/listEditionDialog.dart';
 import 'package:shoppingm8_fe/list/product/dto/productResponseDto.dart';
 import 'package:shoppingm8_fe/list/product/productWidget.dart';
+import 'package:shoppingm8_fe/list/shoppingMode.dart';
 import 'package:shoppingm8_fe/user/dto/userDto.dart';
 
 import 'addUsersToListWidget.dart';
@@ -36,6 +38,8 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
   AuthenticationApiProvider _authenticationApiProvider = AuthenticationApiProvider();
   ListApiProvider _listApiProvider = ListApiProvider();
 
+  bool shoppingMode = false;
+
   Widget noProducts = Container(
     width: double.infinity,
     height: double.infinity,
@@ -56,7 +60,7 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
     return Scaffold(
       appBar: AppBar(
         title: Text(listDto.name),
-        actions: <Widget>[
+        actions: shoppingMode ? null : <Widget>[
           PopupMenuButton(
             onSelected: (x) => x(),
             itemBuilder: (BuildContext context) => [
@@ -71,13 +75,12 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
                 title: "Invite users...",
                 iconData: Icons.group_add,
                 value: () => _inviteNewUsersToList(listDto, context),
-//                value: () => print("x"),
               ),
               CustomPopupMenuItem(
                 color: Colors.lightBlueAccent,
-                title: "Go to shopping mode",
+                title: shoppingMode ? "End shopping mode" : "Go to shopping mode",
                 iconData: Icons.add_shopping_cart,
-                value: () => print("shopping mode"),
+                value: () => _toggleShoppingMode(),
               ),
               (listDto.owner.id == me.id ?
               CustomPopupMenuItem(
@@ -113,6 +116,11 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
+                  shoppingMode ?
+                  RoundButtonWidget(
+                      onPressed: _toggleShoppingMode,
+                      color: Colors.greenAccent,
+                      icon: Icons.done) :
                   RoundButtonWidget(
                       onPressed: () {
                         showDialog(
@@ -146,7 +154,8 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
         if (dtos.isNotEmpty) {
           productList = dtos.map((dto) =>
               ProductWidget(productDto: dto,
-                    apiProvider: _apiProvider)
+                    apiProvider: _apiProvider,
+                    initialShoppingMode: shoppingMode,)
               ).toList();
         }
       });
@@ -157,7 +166,7 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
 
   void _addProduct(ProductResponseDto dto) {
     setState(() {
-      productList = productList + <ProductWidget>[ProductWidget(productDto: dto, apiProvider: _apiProvider,)];
+      productList = productList + <ProductWidget>[ProductWidget(productDto: dto, apiProvider: _apiProvider, initialShoppingMode: shoppingMode,)];
     });
   }
 
@@ -226,6 +235,14 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
           );
         }
     );
+  }
+
+  void _toggleShoppingMode() {
+    setState(() {
+      shoppingMode = !shoppingMode;
+      EventHandler().send(ShoppingModeToggleEvent(shoppingMode));
+    });
+
   }
 
   Future<void> _requestDeletingList(BuildContext context) async {

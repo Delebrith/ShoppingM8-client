@@ -40,7 +40,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "If valid credentials were provided and user has a picture",
                 response = InputStreamResource.class),
-            @ApiResponse(code = 204, message = "If valid credentials were provided and user has no picture",),
+            @ApiResponse(code = 204, message = "If valid credentials were provided and user has no picture"),
             @ApiResponse(code = 400, message = "If invalid data was provided")})
     @GetMapping("/{id}/picture")
     ResponseEntity<InputStreamResource> getProfilePicture(@PathVariable Long id) {
