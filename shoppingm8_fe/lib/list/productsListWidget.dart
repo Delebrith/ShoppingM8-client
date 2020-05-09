@@ -57,90 +57,101 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(listDto.name),
-        actions: shoppingMode ? null : <Widget>[
-          PopupMenuButton(
-            onSelected: (x) => x(),
-            itemBuilder: (BuildContext context) => [
-              CustomPopupMenuItem(
-                color: Colors.lightGreen,
-                title: "Edit list",
-                value: () => _editList(listDto, context),
-                iconData: Icons.edit
+    return WillPopScope(
+      onWillPop: () => _onWillPop(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(listDto.name),
+          actions: shoppingMode ? null : <Widget>[
+            PopupMenuButton(
+              onSelected: (x) => x(),
+              itemBuilder: (BuildContext context) => [
+                CustomPopupMenuItem(
+                  color: Colors.lightGreen,
+                  title: "Edit list",
+                  value: () => _editList(listDto, context),
+                  iconData: Icons.edit
+                ),
+                CustomPopupMenuItem(
+                  color: Colors.blue,
+                  title: "Invite users...",
+                  iconData: Icons.group_add,
+                  value: () => _inviteNewUsersToList(listDto, context),
+                ),
+                CustomPopupMenuItem(
+                  color: Colors.lightBlueAccent,
+                  title: shoppingMode ? "End shopping mode" : "Go to shopping mode",
+                  iconData: Icons.add_shopping_cart,
+                  value: () => _toggleShoppingMode(),
+                ),
+                (listDto.owner.id == me.id ?
+                CustomPopupMenuItem(
+                  value: () => _deleteList(listDto, context),
+                  color: Colors.red,
+                  iconData: Icons.delete_forever,
+                  title: "Delete list",
+                ) : CustomPopupMenuItem(
+                  value: () => _leaveList(listDto, context),
+                  color: Colors.orange,
+                  iconData: FontAwesome.logout,
+                  title: "Leave list",
+                )),
+              ]
+            )
+          ],
+        ),
+        resizeToAvoidBottomInset: false,
+        body: Stack(
+          children: <Widget>[
+            Container(
+              child: productList.isEmpty ?
+              noProducts :
+              ListView(
+                scrollDirection: Axis.vertical,
+                children: productList,
               ),
-              CustomPopupMenuItem(
-                color: Colors.blue,
-                title: "Invite users...",
-                iconData: Icons.group_add,
-                value: () => _inviteNewUsersToList(listDto, context),
-              ),
-              CustomPopupMenuItem(
-                color: Colors.lightBlueAccent,
-                title: shoppingMode ? "End shopping mode" : "Go to shopping mode",
-                iconData: Icons.add_shopping_cart,
-                value: () => _toggleShoppingMode(),
-              ),
-              (listDto.owner.id == me.id ?
-              CustomPopupMenuItem(
-                value: () => _deleteList(listDto, context),
-                color: Colors.red,
-                iconData: Icons.delete_forever,
-                title: "Delete list",
-              ) : CustomPopupMenuItem(
-                value: () => _leaveList(listDto, context),
-                color: Colors.orange,
-                iconData: FontAwesome.logout,
-                title: "Leave list",
-              )),
-            ]
-          )
-        ],
-      ),
-      resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: <Widget>[
-          Container(
-            child: productList.isEmpty ?
-            noProducts :
-            ListView(
-              scrollDirection: Axis.vertical,
-              children: productList,
             ),
-          ),
-          Container(
-              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              height: double.infinity,
-              alignment: Alignment.bottomRight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  shoppingMode ?
-                  RoundButtonWidget(
-                      onPressed: _toggleShoppingMode,
-                      color: Colors.greenAccent,
-                      icon: Icons.done) :
-                  RoundButtonWidget(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return ProductCreationDialog(
-                                title: "Create new product",
-                                apiProvider: _apiProvider,
-                                onSuccess: ((dto) => _addProduct(dto)),
-                              );
-                            });
-                      },
-                      color: Colors.greenAccent,
-                      icon: Icons.add),
-                ],
-              )
-          )
-        ],
-      ),
+            Container(
+                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                height: double.infinity,
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    shoppingMode ?
+                    RoundButtonWidget(
+                        onPressed: _toggleShoppingMode,
+                        color: Colors.lightGreen,
+                        icon: Icons.remove_shopping_cart) :
+                    RoundButtonWidget(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ProductCreationDialog(
+                                  title: "Create new product",
+                                  apiProvider: _apiProvider,
+                                  onSuccess: ((dto) => _addProduct(dto)),
+                                );
+                              });
+                        },
+                        color: Colors.greenAccent,
+                        icon: Icons.add),
+                  ],
+                )
+            )
+          ],
+        ),
+      )
     );
+  }
+
+  Future<bool> _onWillPop() {
+    if (shoppingMode) {
+      _toggleShoppingMode();
+      return Future.value(false);
+    }
+    return Future.value(true);
   }
 
   void _getProducts() async {

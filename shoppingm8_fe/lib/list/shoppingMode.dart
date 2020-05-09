@@ -1,4 +1,3 @@
-
 import 'package:eventhandler/eventhandler.dart';
 
 class ShoppingModeToggleEvent extends EventBase {

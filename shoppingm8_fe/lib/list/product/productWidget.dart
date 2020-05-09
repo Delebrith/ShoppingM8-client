@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:eventhandler/eventhandler.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +8,6 @@ import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/common/roundButtonWidget.dart';
 import 'package:shoppingm8_fe/list/product/productApiProvider.dart';
 import 'package:shoppingm8_fe/list/product/productCategory.dart';
-import 'package:shoppingm8_fe/list/productsListWidget.dart';
 import 'package:shoppingm8_fe/list/shoppingMode.dart';
 
 import 'dto/productResponseDto.dart';
@@ -34,6 +31,7 @@ class ProductWidget extends StatefulWidget {
 class _ProductWidgetState extends State<ProductWidget> {
   ProductResponseDto productDto;
   final ProductApiProvider apiProvider;
+  final TextEditingController purchasedAmountController = TextEditingController();
   double purchasedAmount;
 
   bool visible = true;
@@ -43,6 +41,7 @@ class _ProductWidgetState extends State<ProductWidget> {
   _ProductWidgetState({this.productDto, this.apiProvider, this.shoppingMode}) {
     EventHandler().subscribe(_toggledShoppingMode);
     purchasedAmount = productDto.purchasedAmount;
+    purchasedAmountController.text = purchasedAmount.toString();
   }
 
   @override
@@ -114,9 +113,10 @@ class _ProductWidgetState extends State<ProductWidget> {
                                           width: 50,
                                           height: 42,
                                           child: TextField(
+                                            onChanged: _changeAmountText,
                                             enableInteractiveSelection: false,
                                             keyboardType: TextInputType.number,
-                                            controller: TextEditingController()..text = productDto.purchasedAmount.toString(),
+                                            controller: purchasedAmountController,
                                             textAlign: TextAlign.right,
                                             style: TextStyle(fontSize: 16, ))),
                                         Padding(
@@ -133,12 +133,17 @@ class _ProductWidgetState extends State<ProductWidget> {
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: <Widget>[
-                                      RoundButtonWidget(
-                                        color: Colors.red,
-                                        icon: Icons.remove,
-                                        radius: 20,
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 10),  
+                                        child: RoundButtonWidget(
+                                          onPressed: _decreaseAmount,
+                                          color: Colors.red,
+                                          icon: Icons.remove,
+                                          radius: 20,
+                                        )
                                       ),
                                       RoundButtonWidget(
+                                        onPressed: _increaseAmount,
                                         color: Colors.lightGreen,
                                         icon: Icons.add,
                                         radius: 20,
@@ -213,34 +218,64 @@ class _ProductWidgetState extends State<ProductWidget> {
     }
   }
 
-  void changeAmount(String text) {
-    purchasedAmount = double.parse(text);
-    
-    if (purchasedAmount < 0)
+  void _changeAmountText(String text) {
+    double purchasedAmount = double.parse(text);
+    bool outOfBounds = false;
+
+    if (purchasedAmount < 0) {
       purchasedAmount = 0;
-    if (purchasedAmount > productDto.requiredAmount)
+      outOfBounds = true;
+    }
+    if (purchasedAmount > productDto.requiredAmount) {
       purchasedAmount = productDto.requiredAmount;
+      outOfBounds = true;
+    }
     
-    amountChanged();
+    if (outOfBounds)
+      _updatePurchasedAmountText();
+    _changeAmount(purchasedAmount);
   }
 
-  void increaseAmount() {
-    purchasedAmount += 1;
+  void _increaseAmount() {
+    double purchasedAmount = this.purchasedAmount + 1;
     if (purchasedAmount > productDto.requiredAmount)
       purchasedAmount = productDto.requiredAmount;
 
-    amountChanged();
+    _changeAmount(purchasedAmount);
+    _updatePurchasedAmountText();
   }
 
-  void decreaseAmount() {
+  void _decreaseAmount() {
+    double purchasedAmount = this.purchasedAmount - 1;
     purchasedAmount -= 1;
     if (purchasedAmount < 0)
       purchasedAmount = 0;
     
-    amountChanged();
+    _changeAmount(purchasedAmount);
+    _updatePurchasedAmountText();
   }
 
-  void amountChanged() {
+  void _changeAmount(double newValue) {
+    if (this.purchasedAmount == newValue)
+      return;
+    
+    apiProvider.purchaseProduct(productDto.id, newValue - this.purchasedAmount);
 
+    this.purchasedAmount = newValue;
+  }
+
+  void _updatePurchasedAmountText() {
+    int previousPosition = purchasedAmountController.selection.baseOffset;
+    purchasedAmountController.text = purchasedAmount.toString();
+    if (previousPosition != -1) {
+      if(purchasedAmountController.text.length < previousPosition)
+        previousPosition = purchasedAmountController.text.length;
+      purchasedAmountController.selection = 
+        TextSelection.fromPosition(
+          TextPosition(
+            offset: previousPosition
+          )
+        );
+    }
   }
 }
