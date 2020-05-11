@@ -86,10 +86,10 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
                   value: () => _toggleShoppingMode(),
                 ),
                 CustomPopupMenuItem(
-                color: Colors.blue,
-                title: "See receipts",
-                iconData: Icons.receipt,
-                value: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ReceiptListWidget(listDto: listDto))),
+                  color: Colors.deepPurpleAccent,
+                  title: "See receipts",
+                  iconData: Icons.receipt,
+                  value: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ReceiptListWidget(listDto: listDto))),
                 ),
                 (listDto.owner.id == me.id ?
                 CustomPopupMenuItem(
