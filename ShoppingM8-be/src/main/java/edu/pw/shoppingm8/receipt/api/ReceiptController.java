@@ -52,7 +52,9 @@ public class ReceiptController {
         List list = listService.getList(listId);
         listService.checkIfUserHasAccessTo(list);
         Receipt receipt = receiptService.getReceipt(list, id);
-        return ResponseEntity.ok(new InputStreamResource(new ByteArrayInputStream(receipt.getPicture())));
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(new InputStreamResource(new ByteArrayInputStream(receipt.getPicture())));
     }
 
     @ApiOperation(value = "Create receipt", nickname = "create receipt", notes = "",
@@ -72,7 +74,6 @@ public class ReceiptController {
             receipt = receiptService.createReceipt(picture.getBytes(), list);
             return ResponseEntity
                     .created(URI.create(String.format("/list/%d/receipt/%d", listId, receipt.getId())))
-                    .contentType(MediaType.IMAGE_JPEG)
                     .body(ReceiptDto.of(receipt));
         } catch (IOException e) {
             throw new MultipartFileException();

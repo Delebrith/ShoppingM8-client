@@ -17,11 +17,11 @@ abstract class ApiProvider {
         ));
   }
 
-  Future<Response> sendPostMultipartRequest({String endpoint, FormData body}) {
+  Future<Response> sendPostMultipartRequest({String endpoint, FormData body, ContentType contentType}) {
     return dio.postUri(uri.resolve(endpoint),
         data: body,
         options: Options(
-          contentType: ContentType.json.value,
+          contentType: contentType.value,
         ));
   }
 

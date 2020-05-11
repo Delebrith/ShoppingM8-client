@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:shoppingm8_fe/common/ApiProvider.dart';
 
@@ -15,6 +17,10 @@ class ReceiptApiProvider extends ApiProvider {
   }
 
   Future<Response> createReceipt(String filePath) async {
-    return sendPostMultipartRequest(endpoint: "", body: FormData.fromMap({"picture" : await MultipartFile.fromFile(filePath)}));
+    return sendPostMultipartRequest(
+        endpoint: "",
+        body: FormData.fromMap({"picture" : await MultipartFile.fromFile(filePath)}),
+        contentType: ContentType.parse("image/jpeg")
+    );
   }
 }
