@@ -12,6 +12,7 @@ import 'package:shoppingm8_fe/list/listApiProvider.dart';
 import 'package:shoppingm8_fe/list/listEditionDialog.dart';
 import 'package:shoppingm8_fe/list/product/dto/productResponseDto.dart';
 import 'package:shoppingm8_fe/list/product/productWidget.dart';
+import 'package:shoppingm8_fe/list/receipt/receiptListWidget.dart';
 import 'package:shoppingm8_fe/list/shoppingMode.dart';
 import 'package:shoppingm8_fe/user/dto/userDto.dart';
 
@@ -83,6 +84,12 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
                   title: shoppingMode ? "End shopping mode" : "Go to shopping mode",
                   iconData: Icons.add_shopping_cart,
                   value: () => _toggleShoppingMode(),
+                ),
+                CustomPopupMenuItem(
+                color: Colors.blue,
+                title: "See receipts",
+                iconData: Icons.receipt,
+                value: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ReceiptListWidget(listDto: listDto))),
                 ),
                 (listDto.owner.id == me.id ?
                 CustomPopupMenuItem(

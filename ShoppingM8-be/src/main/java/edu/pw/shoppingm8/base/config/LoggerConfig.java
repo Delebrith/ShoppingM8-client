@@ -7,8 +7,7 @@ import org.zalando.logbook.DefaultHttpLogFormatter;
 import org.zalando.logbook.DefaultHttpLogWriter;
 import org.zalando.logbook.Logbook;
 
-import static org.zalando.logbook.Conditions.exclude;
-import static org.zalando.logbook.Conditions.requestTo;
+import static org.zalando.logbook.Conditions.*;
 
 @Configuration
 @Slf4j
@@ -29,7 +28,8 @@ public class LoggerConfig {
                         requestTo("/favicon.ico"),
                         requestTo("/public/**"),
                         requestTo("/json/**"),
-                        requestTo("/")
+                        requestTo("/"),
+                        contentType("image/jpeg", "image/png")
                 )).build();
     }
 }
