@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:eventhandler/eventhandler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,6 +11,7 @@ import 'package:shoppingm8_fe/list/productsListWidget.dart';
 
 import 'ListTileWidget.dart';
 import 'dto/listResponseDto.dart';
+import 'invitation/invtationAcceptedEvent.dart';
 import 'listCreationDialog.dart';
 
 class MyListsWidget extends StatefulWidget {
@@ -23,6 +25,7 @@ class _MyListsWidgetState extends State<StatefulWidget> {
   List<Widget> lists = [];
 
   _MyListsWidgetState() {
+    EventHandler().subscribe(_invitationAccepted);
     _getLists();
   }
 
@@ -65,6 +68,19 @@ class _MyListsWidgetState extends State<StatefulWidget> {
         ],
       ),
     );
+  }
+
+  @override
+  @mustCallSuper
+  dispose() {
+    EventHandler().unsubscribe(_invitationAccepted);
+    super.dispose();
+  }
+
+  _invitationAccepted(InvitationAcceptedEvent event) {
+    setState(() {
+      this._addToLists(event.listDto);
+    });
   }
 
   void _getLists() async {

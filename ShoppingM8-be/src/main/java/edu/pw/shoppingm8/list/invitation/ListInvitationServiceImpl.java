@@ -3,14 +3,17 @@ package edu.pw.shoppingm8.list.invitation;
 import edu.pw.shoppingm8.authentication.AuthenticationService;
 import edu.pw.shoppingm8.list.List;
 import edu.pw.shoppingm8.list.ListService;
+import edu.pw.shoppingm8.list.invitation.api.dto.ListInvitationDto;
 import edu.pw.shoppingm8.list.invitation.db.ListInvitation;
 import edu.pw.shoppingm8.list.invitation.db.ListInvitationRepository;
+import edu.pw.shoppingm8.list.invitation.event.InvitationCreatedEvent;
 import edu.pw.shoppingm8.list.invitation.exception.ForbiddenListInvitationOperationException;
 import edu.pw.shoppingm8.list.invitation.exception.ListInvitationNotFoundException;
 import edu.pw.shoppingm8.list.invitation.exception.UserIsAlreadyAMemberException;
 import edu.pw.shoppingm8.list.invitation.exception.UserIsAlreadyInvitedException;
 import edu.pw.shoppingm8.user.db.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,7 @@ public class ListInvitationServiceImpl implements ListInvitationService {
     private final ListInvitationRepository listInvitationRepository;
     private final AuthenticationService authenticationService;
     private final ListService listService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public ListInvitation getInvitation(Long id) {
@@ -58,7 +62,9 @@ public class ListInvitationServiceImpl implements ListInvitationService {
                 .inviting(authenticationService.getAuthenticatedUser())
                 .list(list)
                 .build();
-        return listInvitationRepository.save(invitation);
+        listInvitationRepository.save(invitation);
+        eventPublisher.publishEvent(new InvitationCreatedEvent(invitation));
+        return invitation;
     }
 
     @Override

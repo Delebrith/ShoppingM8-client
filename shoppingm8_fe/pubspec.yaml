@@ -38,6 +38,8 @@ dependencies:
   dotted_border: ^1.0.5
   fluttertoast: ^4.0.0
   eventhandler: ^1.0.4
+  flutter_launcher_icons: ^0.7.3
+  firebase_messaging: ^6.0.13
 
 dev_dependencies:
   flutter_test:
@@ -88,3 +90,8 @@ flutter:
 
   assets:
     - assets/
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"

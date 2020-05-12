@@ -18,4 +18,6 @@ public interface UserService {
     void deregister(User user);
 
     Page<User> getUsers(UserSearchDto searchDto);
+
+    void updateFmcToken(User user, String token);
 }

@@ -60,7 +60,7 @@ class AuthenticationInterceptor extends dio_package.Interceptor {
     var requestOptions = err.request;
     var token = await secureStorage.read(key: "JWT_access_token");
     if (token != null) {
-      requestOptions.headers.addEntries([MapEntry("Authorization", token)]);
+      requestOptions.headers.addEntries([MapEntry("Authorization", "Bearer " + token)]);
     }
 
     final dio_package.Options options = dio_package.Options(

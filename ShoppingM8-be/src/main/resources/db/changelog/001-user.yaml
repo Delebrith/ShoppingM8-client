@@ -30,3 +30,6 @@ databaseChangeLog:
               - column:
                   name: profile_picture
                   type: blob
+              - column:
+                  name: fmc_token
+                  type: varchar2(255)

@@ -50,7 +50,7 @@ class InvitationsTileWidget extends StatelessWidget {
                         icon: Icons.group_add,
                         radius: 40,
                         color: Colors.lightBlueAccent,
-                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ListInvitationsWidget(addToListsFunction: addToListsFunction))),
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ListInvitationsWidget())),
                       ),
                     )
                   ],

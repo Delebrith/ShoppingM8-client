@@ -13,6 +13,7 @@ import 'package:shoppingm8_fe/auth/dto/registrationDto.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/main.dart';
 import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
+import 'package:shoppingm8_fe/user/userApiProvider.dart';
 
 import 'dto/authenticationResponseDto.dart';
 
@@ -197,6 +198,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
       var responseBody = AuthenticationResponseDto.fromJson(jsonDecode(await response.stream.bytesToString()));
       storage.write(key: "JWT_access_token", value: responseBody.accessToken);
       storage.write(key: "JWT_refresh_token", value: responseBody.refreshToken);
+      _updateFcmToken();
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => MainMenuWidget()));
     } else {
@@ -218,4 +220,10 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     }
   }
 
+  Future<void> _updateFcmToken() async {
+    var storage = FlutterSecureStorage();
+    var token = await storage.read(key: "fcm-token");
+    var userApiProvider = UserApiProvider();
+    await userApiProvider.updateFcmToken(token);
+  }
 }

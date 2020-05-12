@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:eventhandler/eventhandler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
@@ -11,26 +12,25 @@ import 'package:shoppingm8_fe/list/invitation/dto/listInvitationDto.dart';
 import 'package:shoppingm8_fe/list/invitation/listInvitationApiProvider.dart';
 import 'package:shoppingm8_fe/user/dto/userDto.dart';
 
+import 'invtationAcceptedEvent.dart';
 import 'listInvitationInfoWidget.dart';
 
 class ReceivedInvitationWidget extends StatefulWidget {
   final ListInvitationDto invitationDto;
   final ListInvitationApiProvider apiProvider;
-  final Function addToListsFunction;
 
-  const ReceivedInvitationWidget({Key key, this.invitationDto, this.apiProvider, this.addToListsFunction}) : super(key: key);
+  const ReceivedInvitationWidget({Key key, this.invitationDto, this.apiProvider}) : super(key: key);
 
   @override
-  _ReceivedInvitationWidget createState() => _ReceivedInvitationWidget(invitationDto: invitationDto, apiProvider: apiProvider, addToListsFunction: addToListsFunction);
+  _ReceivedInvitationWidget createState() => _ReceivedInvitationWidget(invitationDto: invitationDto, apiProvider: apiProvider);
 }
 
 class _ReceivedInvitationWidget extends State<ReceivedInvitationWidget> {
   final ListInvitationDto invitationDto;
   final ListInvitationApiProvider apiProvider;
-  final Function addToListsFunction;
   bool visible = true;
 
-  _ReceivedInvitationWidget({this.invitationDto, this.apiProvider, this.addToListsFunction});
+  _ReceivedInvitationWidget({this.invitationDto, this.apiProvider});
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +107,6 @@ class _ReceivedInvitationWidget extends State<ReceivedInvitationWidget> {
 
   void _refreshListsAfterAcceptance(ListResponseDto list, UserDto invited) {
     list.members.add(invited);
-    addToListsFunction(list);
+    EventHandler().send(InvitationAcceptedEvent(list));
   }
 }

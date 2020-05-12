@@ -42,3 +42,4 @@ lib/generated_plugin_registrant.dart
 
 # Security
 **/android/key.properties
+**/android/app/google-services.json

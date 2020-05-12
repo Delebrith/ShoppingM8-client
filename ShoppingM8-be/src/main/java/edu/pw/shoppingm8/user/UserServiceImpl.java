@@ -79,6 +79,12 @@ class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public void updateFmcToken(User user, String token) {
+        user.setFmcToken(token);
+        userRepository.save(user);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }
