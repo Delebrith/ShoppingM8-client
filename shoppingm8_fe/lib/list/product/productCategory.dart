@@ -94,7 +94,8 @@ class ProductCategoryHepler {
     }
   }
 
-  static Set<String> getGooglePlaceType(ProductCategory category) {
+  //Ref: https://developers.google.com/places/supported_types
+  static Set<String> getGooglePlaceType(ProductCategory category) { 
     switch(category) {
       case ProductCategory.FOOD:
         return { "bakery", "grocery_or_supermarket", "convenience_store" };
