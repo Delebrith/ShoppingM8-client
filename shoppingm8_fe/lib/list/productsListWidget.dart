@@ -14,6 +14,7 @@ import 'package:shoppingm8_fe/list/product/dto/productResponseDto.dart';
 import 'package:shoppingm8_fe/list/product/productWidget.dart';
 import 'package:shoppingm8_fe/list/receipt/receiptListWidget.dart';
 import 'package:shoppingm8_fe/list/shoppingMode.dart';
+import 'package:shoppingm8_fe/maps/mapWidget.dart';
 import 'package:shoppingm8_fe/user/dto/userDto.dart';
 
 import 'addUsersToListWidget.dart';
@@ -48,7 +49,7 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
     child: Text("No products found."),
   );
 
-  List<Widget> productList = [];
+  List<ProductWidget> productList = [];
 
   _ProductsListWidgetState({this.listDto}) {
     _apiProvider = ProductApiProvider(id: listDto.id);
@@ -72,6 +73,12 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
                   title: "Edit list",
                   value: () => _editList(listDto, context),
                   iconData: Icons.edit
+                ),
+                CustomPopupMenuItem(
+                  color: Colors.greenAccent,
+                  title: "Find shops on map",
+                  iconData: Icons.map,
+                  value: () => _findShops(listDto, context),
                 ),
                 CustomPopupMenuItem(
                   color: Colors.blue,
@@ -290,5 +297,10 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
   _inviteNewUsersToList(ListResponseDto listDto, BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
         builder: (context) => AddUsersToListWidget(listDto: listDto,)));
+  }
+
+  _findShops(ListResponseDto listDto, BuildContext context) async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MapWidget(
+        categories: productList.map((e) => e.productDto.category).toSet())));
   }
 }
