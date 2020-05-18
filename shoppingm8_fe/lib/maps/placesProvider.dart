@@ -46,23 +46,36 @@ class PlacesProvider {
     return LatLng(locationData.latitude, locationData.longitude);
   }
 
-  Future<Set<Marker>> getPlacesByCategory(Set<ProductCategory> categories, location, {radius = 1000}) async {
-    Set<String> types = {};
-    for(ProductCategory category in categories) {
-      types = types.union(ProductCategoryHepler.getGooglePlaceType(category));
-    }
-
-    if (location == null)
-      return {};
-    
+  Future<Set<Marker>> _getPlacesByType(String type, LatLng location, int radius) async {
     PlacesSearchResponse response =
-        await _connector.searchNearbyWithRadius(new Location(location.latitude, location.longitude), radius, type: types.join("|"));
-    if (!response.isOkay)
+        await _connector.searchNearbyWithRadius(new Location(location.latitude, location.longitude), radius, type: type);
+    if (!response.isOkay) {
+      print("Error retrieving shops: " + (response.errorMessage ?? "null"));
       return {};
+    }
     
     return response.results.map((r) => new Marker(
-      markerId: new MarkerId(r.id),
+      markerId: new MarkerId(r.geometry.location.toString()),
       position: new LatLng(r.geometry.location.lat, r.geometry.location.lng))
     ).toSet();
+  }
+
+  Future<Set<Marker>> getPlacesByCategory(Set<ProductCategory> categories, location, {radius = 1000}) async {
+    Set<String> types = {};
+    for (ProductCategory category in categories) {
+      types.addAll(ProductCategoryHepler.getGooglePlaceType(category));
+    }
+
+    if (location == null) {
+      print("Failed to retrieve location");
+      return {};
+    }
+    
+    Set<Marker> markers = {};
+    for (String type in types) {
+      markers.addAll(await _getPlacesByType(type, location, radius));
+    }
+
+    return markers;
   }
 }

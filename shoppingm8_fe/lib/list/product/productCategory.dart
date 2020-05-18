@@ -108,7 +108,7 @@ class ProductCategoryHepler {
       case ProductCategory.TOOLS:
         return { "hardware_store" };
       case ProductCategory.HOBBY_OR_FUN:
-        return { "bicycle store", "book store", "pet store", "electronics_store", "florist", "jewelry_store" };
+        return { "bicycle_store", "book_store", "pet_store", "electronics_store", "florist", "jewelry_store" };
       default:
         return { "store", "shopping_mall", "supermarket" };
     }

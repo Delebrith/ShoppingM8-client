@@ -300,7 +300,13 @@ class _ProductsListWidgetState extends State<StatefulWidget> {
   }
 
   _findShops(ListResponseDto listDto, BuildContext context) async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MapWidget(
-        categories: productList.map((e) => e.productDto.category).toSet())));
+    Response productsResponse = await _apiProvider.getListsProducts();
+    if (productsResponse.statusCode >= 200 && productsResponse.statusCode < 300) {
+      List responseBody = productsResponse.data;
+      List<ProductResponseDto> dtos = responseBody.map((dto) =>
+          ProductResponseDto.fromJson(dto)).toList();
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MapWidget(
+          categories: dtos.map((e) => e.category).toSet())));
+    }
   }
 }
