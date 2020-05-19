@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:location/location.dart' as loc;
 import 'package:shoppingm8_fe/list/product/productCategory.dart';
+import 'package:shoppingm8_fe/maps/placesException.dart';
 
 
 class PlacesProvider {
@@ -49,9 +50,8 @@ class PlacesProvider {
   Future<Set<Marker>> _getPlacesByType(String type, LatLng location, int radius) async {
     PlacesSearchResponse response =
         await _connector.searchNearbyWithRadius(new Location(location.latitude, location.longitude), radius, type: type);
-    if (!response.isOkay) {
-      print("Error retrieving shops: " + (response.errorMessage ?? "null"));
-      return {};
+    if (!response.isOkay && response.status != "ZERO_RESULTS") {
+      throw PlacesException("Could not get shops list");
     }
     
     return response.results.map((r) => new Marker(
@@ -67,8 +67,7 @@ class PlacesProvider {
     }
 
     if (location == null) {
-      print("Failed to retrieve location");
-      return {};
+      throw PlacesException("Could not get location");
     }
     
     Set<Marker> markers = {};
