@@ -93,4 +93,24 @@ class ProductCategoryHepler {
         return ProductCategory.OTHER;
     }
   }
+
+  //Ref: https://developers.google.com/places/supported_types
+  static Set<String> getGooglePlaceType(ProductCategory category) { 
+    switch(category) {
+      case ProductCategory.FOOD:
+        return { "bakery", "grocery_or_supermarket", "convenience_store" };
+      case ProductCategory.CLEANING_SUPPLIES:
+        return { "supermarket" };
+      case ProductCategory.PHARMACY:
+        return { "pharmacy", "drugstore" };
+      case ProductCategory.COSMETICS:
+        return { "supermarket", "drugstore" };
+      case ProductCategory.TOOLS:
+        return { "hardware_store" };
+      case ProductCategory.HOBBY_OR_FUN:
+        return { "bicycle_store", "book_store", "pet_store", "electronics_store", "florist", "jewelry_store" };
+      default:
+        return { "store", "shopping_mall", "supermarket" };
+    }
+  }
 }

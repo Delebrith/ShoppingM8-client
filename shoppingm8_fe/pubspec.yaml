@@ -38,6 +38,10 @@ dependencies:
   dotted_border: ^1.0.5
   fluttertoast: ^4.0.0
   eventhandler: ^1.0.4
+  google_maps_webservice: ^0.0.16
+  google_maps_flutter: ^0.4.0
+  location: ^3.0.0
+  android_metadata: ^0.1.1
   flutter_launcher_icons: ^0.7.3
   firebase_messaging: ^6.0.13
 
