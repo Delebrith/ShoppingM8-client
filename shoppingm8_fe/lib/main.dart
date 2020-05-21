@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as storage;
 import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
 import 'package:shoppingm8_fe/auth/authenticationInterceptor.dart';
+import 'package:shoppingm8_fe/common/pushNotificationManager.dart';
 import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
 
 import 'auth/loginWidget.dart';
 
 String serverUrl = "http://localhost:8080";
 Dio defaultDio = Dio();
+PushNotificationsManager pushNotificationsManager = PushNotificationsManager.instance;
 
 void main() => runApp(MyApp());
 
@@ -67,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Timer(Duration(seconds: 5), () {
       _showDialogIfServerNotResponding();
     });
+    pushNotificationsManager.init();
   }
 
   void _showDialogIfServerNotResponding() {
@@ -90,13 +93,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    pushNotificationsManager.context = context;
     return _startingWidget;
   }
 
   void _onAuthenticationError() {
     var secureStorage = storage.FlutterSecureStorage();
-    secureStorage.write(key: "JWT_access_token", value: null);
-    secureStorage.write(key: "JWT_refresh_token", value: null);
+    secureStorage.delete(key: "JWT_access_token");
+    secureStorage.delete(key: "JWT_refresh_token");
     Navigator.push(
         this.context,
         MaterialPageRoute(

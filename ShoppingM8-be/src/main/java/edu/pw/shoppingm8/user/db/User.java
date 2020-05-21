@@ -37,6 +37,8 @@ public class User implements UserDetails {
     @Lob
     private byte[] profilePicture;
 
+    private String fmcToken;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();

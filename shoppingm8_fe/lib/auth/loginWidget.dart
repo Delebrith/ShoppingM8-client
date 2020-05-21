@@ -15,6 +15,7 @@ import 'package:shoppingm8_fe/auth/dto/socialMediaLoginDto.dart';
 import 'package:shoppingm8_fe/auth/registrationWidget.dart';
 import 'package:shoppingm8_fe/common/dto/errorDto.dart';
 import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
+import 'package:shoppingm8_fe/user/userApiProvider.dart';
 
 class LoginWidget extends StatefulWidget {
   @override
@@ -243,6 +244,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     var responseBody = AuthenticationResponseDto.fromJson(response.data);
     storage.write(key: "JWT_access_token", value: responseBody.accessToken);
     storage.write(key: "JWT_refresh_token", value: responseBody.refreshToken);
+    _updateFcmToken();
     Navigator.push(context, MaterialPageRoute(builder: (context) => MainMenuWidget()));
   }
 
@@ -262,5 +264,12 @@ class _LoginWidgetState extends State<LoginWidget> {
           );
         }
     );
+  }
+
+  Future<void> _updateFcmToken() async {
+    var storage = FlutterSecureStorage();
+    var token = await storage.read(key: "fcm-token");
+    var userApiProvider = UserApiProvider();
+    await userApiProvider.updateFcmToken(token);
   }
 }
