@@ -12,6 +12,7 @@ import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
 import 'auth/loginWidget.dart';
 
 String serverUrl = "http://localhost:8080";
+String appUrl = "https://play.google.com/store/apps/details?id=com.example.shoppingm8";
 Dio defaultDio = Dio();
 PushNotificationsManager pushNotificationsManager = PushNotificationsManager.instance;
 

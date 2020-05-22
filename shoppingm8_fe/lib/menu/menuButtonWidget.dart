@@ -11,19 +11,22 @@ class MenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+    var buttonSize = 0.125 * screenWidth;
+
     return Container(
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.all(5),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           CircleAvatar(
-            radius: 45,
+            radius: buttonSize,
             backgroundColor: color,
             child: IconButton(
               icon: Icon(icon),
               color: Colors.white,
               onPressed: onPressed,
-              iconSize: 40,
+              iconSize: buttonSize,
             ),
           ),
           Padding(
