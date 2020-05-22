@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as storage;
@@ -15,6 +16,10 @@ String serverUrl = "http://localhost:8080";
 String appUrl = "https://play.google.com/store/apps/details?id=com.example.shoppingm8";
 Dio defaultDio = Dio();
 PushNotificationsManager pushNotificationsManager = PushNotificationsManager.instance;
+
+// test values
+String appId = 'ca-app-pub-3940256099942544~3347511713';
+String bannerUnitId = 'ca-app-pub-3940256099942544/6300978111';
 
 void main() => runApp(MyApp());
 
@@ -71,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _showDialogIfServerNotResponding();
     });
     pushNotificationsManager.init();
+    Admob.initialize(appId);
   }
 
   void _showDialogIfServerNotResponding() {

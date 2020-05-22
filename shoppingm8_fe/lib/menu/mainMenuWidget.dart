@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -83,8 +83,9 @@ class MainMenuWidget extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 20, bottom: 50),
+          AdmobBanner(
+            adUnitId: bannerUnitId,
+            adSize: AdmobBannerSize.BANNER,
           )
         ],
       ),
