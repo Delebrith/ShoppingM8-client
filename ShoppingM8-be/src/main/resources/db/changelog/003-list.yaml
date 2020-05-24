@@ -4,7 +4,7 @@ databaseChangeLog:
       author: jlyskawa
       changes:
         - createTable:
-            tableName: List
+            tableName: list
             columns:
               - column:
                   name: id
@@ -25,11 +25,11 @@ databaseChangeLog:
                     nullable: false
 
         - addForeignKeyConstraint:
-            baseTableName: List
+            baseTableName: list
             baseColumnNames:
               - owner_id
             constraintName: List_FK1
-            referencedTableName: User_
+            referencedTableName: user_
             referencedColumnNames: id
             onDelete: CASCADE
 
@@ -54,7 +54,7 @@ databaseChangeLog:
             baseColumnNames:
               - list_id
             constraintName: list_members_FK1
-            referencedTableName: List
+            referencedTableName: list
             referencedColumnNames: id
             onDelete: CASCADE
 
@@ -63,7 +63,7 @@ databaseChangeLog:
             baseColumnNames:
               - user_id
             constraintName: list_members_FK2
-            referencedTableName: User_
+            referencedTableName: user_
             referencedColumnNames: id
             onDelete: CASCADE
         - addUniqueConstraint:
@@ -101,7 +101,7 @@ databaseChangeLog:
             baseColumnNames:
               - list_id
             constraintName: list_invitation_FK1
-            referencedTableName: List
+            referencedTableName: list
             referencedColumnNames: id
             onDelete: CASCADE
         - addForeignKeyConstraint:
@@ -109,7 +109,7 @@ databaseChangeLog:
             baseColumnNames:
               - invited_id
             constraintName: list_invitation_FK2
-            referencedTableName: User_
+            referencedTableName: user_
             referencedColumnNames: id
             onDelete: CASCADE
         - addForeignKeyConstraint:
@@ -117,7 +117,7 @@ databaseChangeLog:
             baseColumnNames:
               - inviting_id
             constraintName: list_invitation_FK3
-            referencedTableName: User_
+            referencedTableName: user_
             referencedColumnNames: id
             onDelete: CASCADE
 

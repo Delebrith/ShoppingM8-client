@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shoppingm8_fe/auth/dto/loginDto.dart';
 import 'package:shoppingm8_fe/auth/dto/registrationDto.dart';
 import 'package:shoppingm8_fe/auth/dto/socialMediaLoginDto.dart';
@@ -21,7 +22,8 @@ class AuthenticationApiProvider extends ApiProvider {
 
   AuthenticationApiProvider() {
     dio = new Dio();
-    dio.options.connectTimeout = 2000;
+    dio.options.connectTimeout = 5000;
+    dio.interceptors.add(PrettyDioLogger(requestBody: true, requestHeader: true, responseBody: true));
     this.uri = Uri.parse(serverUrl + "/" + _authenticationEndpoint + "/");
   }
 

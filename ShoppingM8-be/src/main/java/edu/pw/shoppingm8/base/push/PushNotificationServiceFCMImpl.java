@@ -36,6 +36,7 @@ class PushNotificationServiceFCMImpl implements PushNotificationService {
                 .putAllData(notificationDto.getData())
                 .build();
         try {
+            log.info("Sending push notification {} to {}", notificationDto, to);
             FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
             log.error("Could not send message", e);

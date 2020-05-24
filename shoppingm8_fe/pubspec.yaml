@@ -44,6 +44,7 @@ dependencies:
   android_metadata: ^0.1.1
   flutter_launcher_icons: ^0.7.3
   firebase_messaging: ^6.0.13
+  pretty_dio_logger: ^1.1.1
 
 dev_dependencies:
   flutter_test:
