@@ -67,9 +67,6 @@ class _ProductCreationWidgetState extends State {
                     child: TextFormField(
                       autocorrect: false,
                       keyboardType: TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: <TextInputFormatter>[
-                        WhitelistingTextInputFormatter.digitsOnly
-                      ],
                       decoration: InputDecoration(labelText: "Required amount"),
                       onSaved: (value) => _requiredAmount = num.parse(value),
                     ),

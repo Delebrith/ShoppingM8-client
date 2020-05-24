@@ -21,7 +21,7 @@ public class UserSpecification implements Specification<User> {
 
         if (searchDto.getName() != null) {
             predicateSet.add(criteriaBuilder.like(
-                    criteriaBuilder.lower(root.get("name")), "%" + searchDto.getName() + "%")
+                    criteriaBuilder.lower(root.get("name")), "%" + searchDto.getName().toLowerCase() + "%")
             );
         }
 

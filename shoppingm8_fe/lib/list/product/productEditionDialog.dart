@@ -75,9 +75,6 @@ class _ProductEditionWidgetState extends State {
                       autocorrect: false,
                       initialValue: _requiredAmount.toString(),
                       keyboardType: TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: <TextInputFormatter>[
-                        WhitelistingTextInputFormatter.digitsOnly
-                      ],
                       decoration: InputDecoration(labelText: "Required amount"),
                       onSaved: (value) => _requiredAmount = num.parse(value),
                     ),
