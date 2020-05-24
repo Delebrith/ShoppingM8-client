@@ -1,17 +1,16 @@
-import 'package:dio/dio.dart';
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:share/share.dart';
 import 'package:shoppingm8_fe/auth/loginWidget.dart';
 import 'package:shoppingm8_fe/list/myListsWidget.dart';
 import 'package:shoppingm8_fe/user/accountManagementWidget.dart';
 
+import '../main.dart';
 import 'menuButtonWidget.dart';
 
 class MainMenuWidget extends StatelessWidget {
-  final Function moveToFriendList = () => print("friend");
-  final Function moveToAccountManagement = () => print("account");
-
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
@@ -23,7 +22,7 @@ class MainMenuWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Container(
-              height: screenHeight/3,
+              height: 0.28 * screenHeight,
               decoration: BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage("assets/background.jpg"),
@@ -53,14 +52,14 @@ class MainMenuWidget extends StatelessWidget {
                     MenuButton(
                       title: "My lists",
                       onPressed: () => _moveToListScreen(context),
-                      color: Colors.green,
+                      color: Colors.lightGreen,
                       icon: Icons.format_list_bulleted,
                     ),
                     MenuButton(
-                      title: "My friends",
-                      onPressed: moveToFriendList,
-                      color: Colors.lightBlueAccent,
-                      icon: Icons.people,
+                      title: "My account",
+                      onPressed: () => _moveToAccountManagement(context),
+                      color: Colors.purpleAccent.withOpacity(0.8),
+                      icon: Icons.person,
                     ),
                   ],
                 ),
@@ -68,15 +67,15 @@ class MainMenuWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     MenuButton(
-                      title: "My account",
-                      onPressed: () => _moveToAccountManagement(context),
-                      color: Colors.pinkAccent,
-                      icon: Icons.person,
+                      title: "Share!",
+                      onPressed: () => _shareApp(),
+                      color: Colors.lightBlueAccent,
+                      icon: Icons.share,
                     ),
                     MenuButton(
                       title: "Logout",
                       onPressed: () => _logout(context),
-                      color: Colors.orange,
+                      color: Colors.orangeAccent,
                       icon: Icons.exit_to_app,
                     ),
                   ],
@@ -84,8 +83,9 @@ class MainMenuWidget extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 20, bottom: 50),
+          AdmobBanner(
+            adUnitId: bannerUnitId,
+            adSize: AdmobBannerSize.BANNER,
           )
         ],
       ),
@@ -111,5 +111,9 @@ class MainMenuWidget extends StatelessWidget {
     Navigator.push(context, MaterialPageRoute(
         builder: (context) => AccountManagementWidget()
     ));
+  }
+
+  _shareApp() {
+    Share.share("Hi, check out this app I found! Great for shared shopping lists. $appUrl", subject: "Look what I found!");
   }
 }
