@@ -2,6 +2,7 @@ package edu.pw.shoppingm8.base.config.security;
 
 import edu.pw.shoppingm8.user.db.User;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+@Slf4j
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     private static final String AUTHORIZATION_SCHEMA = "bearer ";
 
@@ -59,6 +61,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             }
         } catch (final Exception e) {
             // Ignore invalid JWT
+            log.error("Could not authorize.", e);
         }
     }
 }

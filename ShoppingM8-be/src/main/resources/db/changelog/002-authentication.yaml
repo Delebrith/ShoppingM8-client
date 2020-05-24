@@ -30,6 +30,6 @@ databaseChangeLog:
             baseColumnNames:
               - user_id
             constraintName: refresh_token_FK1
-            referencedTableName: User_
+            referencedTableName: user_
             referencedColumnNames: id
             onDelete: CASCADE

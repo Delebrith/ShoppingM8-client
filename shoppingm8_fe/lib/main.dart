@@ -5,6 +5,7 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as storage;
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shoppingm8_fe/auth/authenticationApiProvider.dart';
 import 'package:shoppingm8_fe/auth/authenticationInterceptor.dart';
 import 'package:shoppingm8_fe/common/pushNotificationManager.dart';
@@ -12,7 +13,7 @@ import 'package:shoppingm8_fe/menu/mainMenuWidget.dart';
 
 import 'auth/loginWidget.dart';
 
-String serverUrl = "http://localhost:8080";
+String serverUrl = "https://shopping-m8.herokuapp.com";
 String appUrl = "https://play.google.com/store/apps/details?id=com.example.shoppingm8";
 Dio defaultDio = Dio();
 PushNotificationsManager pushNotificationsManager = PushNotificationsManager.instance;
@@ -69,8 +70,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _MyHomePageState() {
     defaultDio.interceptors.add(AuthenticationInterceptor(onAuthenticationError: _onAuthenticationError));
+    defaultDio.interceptors.add(PrettyDioLogger(requestBody: true, requestHeader: true, responseBody: true));
     defaultDio.options.validateStatus = (status) => status < 500 && status != 401;
-    defaultDio.options.connectTimeout = 2000;
+    defaultDio.options.connectTimeout = 5000;
+
     _setStartingWidget();
     Timer(Duration(seconds: 5), () {
       _showDialogIfServerNotResponding();

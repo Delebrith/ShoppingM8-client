@@ -4,7 +4,7 @@ databaseChangeLog:
       author: pszwed
       changes:
         - createTable:
-            tableName: Receipt
+            tableName: receipt
             columns:
               - column:
                   name: id
@@ -31,19 +31,19 @@ databaseChangeLog:
                     - nullable: false
 
         - addForeignKeyConstraint:
-            baseTableName: Receipt
+            baseTableName: receipt
             baseColumnNames:
               - list_id
             constraintName: Receipt_FK1
-            referencedTableName: List
+            referencedTableName: list
             referencedColumnNames: id
             onDelete: CASCADE
 
         - addForeignKeyConstraint:
-            baseTableName: Receipt
+            baseTableName: receipt
             baseColumnNames:
               - created_by
             constraintName: Receipt_FK2
-            referencedTableName: User_
+            referencedTableName: user_
             referencedColumnNames: id
             onDelete: CASCADE
