@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,16 +15,17 @@ class AddUsersToListWidget extends StatefulWidget {
   const AddUsersToListWidget({Key key, this.listDto}) : super(key: key);
 
   @override
-  _AddUsersTopListWidget createState() => _AddUsersTopListWidget(listDto);
+  _AddUsersToListWidgetState createState() => _AddUsersToListWidgetState(listDto);
 }
 
-class _AddUsersTopListWidget extends State<AddUsersToListWidget> {
-  final key = new GlobalKey<_AddUsersTopListWidget>();
+class _AddUsersToListWidgetState extends State<AddUsersToListWidget> {
+  final key = new GlobalKey<_AddUsersToListWidgetState>();
   final ListResponseDto listDto;
 
-  final TextEditingController _searchQuery = new TextEditingController();
+  final TextEditingController _searchQuery = TextEditingController();
+  final StreamController _streamController = StreamController();
+  final ScrollController _listViewController = ScrollController();
   final UserApiProvider _userApiProvider = UserApiProvider();
-  List<Widget> usersToInvite = [];
 
   Widget noUsers = Container(
     width: double.infinity,
@@ -31,8 +34,13 @@ class _AddUsersTopListWidget extends State<AddUsersToListWidget> {
     child: Text("No users."),
   );
 
-  _AddUsersTopListWidget(this.listDto) {
+  List<UserDto> _users = [];
+  int _currentPage = 0;
+  int _totalPages = 0;
+
+  _AddUsersToListWidgetState(this.listDto) {
     _searchQuery.addListener(() => _getUsers());
+    _listViewController.addListener(_endOfListListener);
     _getUsers();
   }
 
@@ -47,9 +55,42 @@ class _AddUsersTopListWidget extends State<AddUsersToListWidget> {
         children: <Widget>[
           Container(
             height: double.infinity,
-            child: usersToInvite.isEmpty
-                ? noUsers
-                : ListView(padding: EdgeInsets.only(top: 50), scrollDirection: Axis.vertical, children: usersToInvite,),
+            child: StreamBuilder(
+                    stream: _streamController.stream,
+                    initialData: [],
+                    builder: (BuildContext buildContext, AsyncSnapshot<dynamic> users) {
+                      if (users == null || users.data == null) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                CircularProgressIndicator(),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Text("Loading..."),
+                            )
+                          ],
+                        );
+                      }
+                      if (users.data.isEmpty) {
+                        return noUsers;
+                      }
+                      return ListView.builder(
+                          itemBuilder: (BuildContext context, int index) {
+                            return UserToInviteTileWidget(listDto: listDto, userDto: users.data[index],);
+                          },
+                          itemCount: users.data.length,
+                          padding: EdgeInsets.only(top: 50),
+                          controller: _listViewController,
+                      );
+                    },
+                  )
           ),
           Container(
             height: double.infinity,
@@ -73,23 +114,50 @@ class _AddUsersTopListWidget extends State<AddUsersToListWidget> {
   }
 
   _getUsers() async {
+    _streamController.sink.add(null);
+    _currentPage = 0;
     Response response =
         await _userApiProvider.getUsers(20, 0, _searchQuery.text ?? "");
+
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      setState(() {
-        usersToInvite.clear();
-      });
       Map responseBody = response.data;
-      List content = responseBody['content'];
-      List<UserDto> dtos = content.map((dto) => UserDto.fromJson(dto)).toList();
+      List<UserDto> searchResult = _getSearchResult(responseBody);
+      _streamController.add(searchResult);
       setState(() {
-        usersToInvite = dtos
-            .map((dto) => UserToInviteTileWidget(userDto: dto, listDto: listDto,))
-            .cast<Widget>()
-            .toList();
+        _totalPages = responseBody['totalPages'];
+        _users = searchResult;
       });
     } else {
       Fluttertoast.showToast(msg: "Could not download users.", backgroundColor: Colors.orangeAccent);
+    }
+  }
+
+  List<UserDto> _getSearchResult(Map responseBody) {
+    List content = responseBody['content'];
+    List<UserDto> searchResult = content.map((dto) => UserDto.fromJson(dto)).toList();
+    searchResult.removeWhere((dto) => listDto.owner.id == dto.id);
+    listDto.members
+        .forEach((member) => searchResult.removeWhere((dto) => member.id == dto.id));
+    return searchResult;
+  }
+
+  Future<void> _endOfListListener() async {
+    if (_currentPage < _totalPages - 1
+        && _listViewController.offset >= _listViewController.position.maxScrollExtent) {
+      _currentPage = _currentPage + 1;
+      Response response =
+          await _userApiProvider.getUsers(20, _currentPage, _searchQuery.text ?? "");
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        Map responseBody = response.data;
+        List<UserDto> searchResult = _getSearchResult(responseBody);
+        setState(() {
+          _users.addAll(searchResult);
+        });
+        _streamController.add(_users);
+      } else {
+        Fluttertoast.showToast(msg: "Could not download users.", backgroundColor: Colors.orangeAccent);
+      }
     }
   }
 }

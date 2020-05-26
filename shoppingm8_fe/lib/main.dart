@@ -49,6 +49,10 @@ class MyApp extends StatelessWidget {
           textTheme: ButtonTextTheme.normal,
           padding: EdgeInsets.all(5),
         ),
+        inputDecorationTheme: InputDecorationTheme(
+          fillColor: Colors.white,
+          filled: true
+        )
       ),
       home: MyHomePage(),
     );

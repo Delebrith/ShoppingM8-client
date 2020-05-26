@@ -33,25 +33,15 @@ class _UserToInviteWidgetState extends State<UserToInviteTileWidget> {
   ListApiProvider _listApiProvider = ListApiProvider();
   Function inviteUserFunction;
   bool invited = false;
-  bool visible = true;
 
   _UserToInviteWidgetState({this.userDto, this.listDto}) {
-    if (userIsNotOwner() && userIsNotMember()) {
-      this.inviteUserFunction = _inviteUserToList;
-    } else {
-      this.visible = false;
-    }
+    this.inviteUserFunction = _inviteUserToList;
     _setTokenAndProfilePicture();
   }
-
-  bool userIsNotMember() => listDto.members.where((member) => member.id == userDto.id).toList().isEmpty;
-
-  bool userIsNotOwner() => listDto.owner.id != userDto.id;
 
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: visible,
       child: Card(
         margin: EdgeInsets.symmetric(vertical: 5),
         child: Padding(
@@ -77,9 +67,16 @@ class _UserToInviteWidgetState extends State<UserToInviteTileWidget> {
                 ],
               ),
               (invited ?
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: Text("invited"),
+              Column(
+                children: <Widget>[
+                  RoundButtonWidget(
+                    radius: 25,
+                    color: Colors.grey,
+                    icon: Icons.check,
+                    onPressed: null,
+                  ),
+                  Text("Invited")
+                ],
               ) :
               Column(
                 children: <Widget>[
