@@ -132,16 +132,12 @@ class AuthenticationServiceImpl implements AuthenticationService {
 
     private User authenticateWithSocialMedia(SocialMediaLoginDto socialMediaLoginDto, SocialMediaService socialMediaService) {
         SocialMediaProfileDto socialMediaProfile = socialMediaService.getProfile(socialMediaLoginDto);
-        
-        User user = null;
-        
-        try {
-            user = userService.getUserByEmail(socialMediaProfile.getEmail());
-        } catch (UserNotFoundException exception) {
-            byte[] picture = socialMediaService.getPicture(socialMediaProfile);
-            user = userService.register(socialMediaProfile, picture);
-        }
-        
-        return user;
+
+        return userService
+                .getUserOptionalByEmail(socialMediaProfile.getEmail())
+                .orElseGet(() -> {
+                    byte[] picture = socialMediaService.getPicture(socialMediaProfile);
+                    return userService.register(socialMediaProfile, picture);
+                });
     }
 }

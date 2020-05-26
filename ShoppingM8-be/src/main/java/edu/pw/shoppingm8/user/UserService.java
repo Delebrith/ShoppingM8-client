@@ -6,6 +6,8 @@ import edu.pw.shoppingm8.user.api.dto.UserSearchDto;
 import edu.pw.shoppingm8.user.db.User;
 import org.springframework.data.domain.Page;
 
+import java.util.Optional;
+
 public interface UserService {
     User register(UserRegistrationDto registrationDto, byte[] profilePicture);
     
@@ -14,6 +16,8 @@ public interface UserService {
     User getUser(Long id);
 
     User getUserByEmail(String username);
+
+    Optional<User> getUserOptionalByEmail(String email);
 
     void deregister(User user);
 
