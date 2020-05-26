@@ -18,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 class UserServiceImpl implements UserService, UserDetailsService {
@@ -67,6 +69,11 @@ class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    public Optional<User> getUserOptionalByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
