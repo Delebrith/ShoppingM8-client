@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: pszwed
+      changes:
+        - createTable:
+            tableName: receipt
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: list_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: picture
+                  type: blob
+                  constraints:
+                    - nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: receipt
+            baseColumnNames:
+              - list_id
+            constraintName: Receipt_FK1
+            referencedTableName: list
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: receipt
+            baseColumnNames:
+              - created_by
+            constraintName: Receipt_FK2
+            referencedTableName: user_
+            referencedColumnNames: id
+            onDelete: CASCADE

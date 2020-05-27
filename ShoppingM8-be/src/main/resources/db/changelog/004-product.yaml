@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: jlyskawa
+      changes:
+        - createTable:
+            tableName: product
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar2(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: list_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: category
+                  type: varchar2(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit
+                  type: varchar2(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: required_amount
+                  type: decimal
+                  constraints:
+                    nullable: false
+              - column:
+                  name: purchased_amount
+                  type: decimal
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: product
+            baseColumnNames:
+              - list_id
+            constraintName: Product_FK1
+            referencedTableName: list
+            referencedColumnNames: id
+            onDelete: CASCADE
